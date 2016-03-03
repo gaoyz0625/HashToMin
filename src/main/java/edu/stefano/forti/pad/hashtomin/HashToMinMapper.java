@@ -17,9 +17,9 @@ import org.apache.hadoop.mapreduce.Mapper;
  *
  * @author stefano
  */
-public class HashToMinMapper extends Mapper<LongWritable,Text,Text,IntWritable> {
+public class HashToMinMapper extends Mapper<IntWritable,IntWritable,IntWritable,ClusterWritable> {
     @Override
-    public void map(LongWritable key, Text value, Mapper.Context context)
+    public void map(IntWritable key, IntWritable value, Mapper.Context context)
         throws IOException, InterruptedException{
           
     }
