@@ -52,5 +52,12 @@ public class ClusterWritable implements Writable{
                 cluster.add(new IntWritable(di.readInt()));
         }
     }
+    
+    public String toString(){
+        String result = new String();
+        for (IntWritable i : cluster)
+            result = result + "\\s" + i.toString();
+        return result;
+    }
 
 }

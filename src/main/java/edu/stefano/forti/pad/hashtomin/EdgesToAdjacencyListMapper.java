@@ -17,10 +17,12 @@ import org.apache.hadoop.mapreduce.Mapper;
  *
  * @author stefano
  */
-public class HashToMinMapper extends Mapper<IntWritable,IntWritable,IntWritable,ClusterWritable> {
+public class EdgesToAdjacencyListMapper extends Mapper<IntWritable,IntWritable,IntWritable,IntWritable> {
     @Override
-    public void map(IntWritable key, IntWritable value, Mapper.Context context)
+    public void map(IntWritable vertexFrom, IntWritable vertexTo, Mapper.Context context)
         throws IOException, InterruptedException{
           
+            context.write(vertexFrom, vertexTo);
+       
     }
 }
