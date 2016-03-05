@@ -29,7 +29,7 @@ public class HashToMin {
         job.setJobName("To Adjacency Lists");
         
         FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileOutputFormat.setOutputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
         
         job.setMapperClass(EdgesToAdjacencyListMapper.class);
         job.setReducerClass(EdgesToAdjacencyListReducer.class);
