@@ -15,21 +15,21 @@ import org.apache.hadoop.io.*;
  */
 public class ClusterWritable implements Writable{
     
-    private TreeSet<IntWritable> cluster;
+    private TreeSet<LongWritable> cluster;
     
     public ClusterWritable(){
-        set(new TreeSet<IntWritable>());
+        set(new TreeSet<LongWritable>());
     }
     
-    public ClusterWritable(TreeSet<IntWritable> cluster){
+    public ClusterWritable(TreeSet<LongWritable> cluster){
         set(cluster);
     }
     
-    public void set(TreeSet<IntWritable> cluster){
+    public void set(TreeSet<LongWritable> cluster){
         this.cluster = cluster;
     }
     
-    public TreeSet<IntWritable> get(){
+    public TreeSet<LongWritable> get(){
         return cluster;
     }
 
@@ -38,7 +38,7 @@ public class ClusterWritable implements Writable{
         int size = cluster.size();
         d.writeInt(size);
         if (size > 0){
-            for (IntWritable v : cluster)
+            for (LongWritable v : cluster)
                 cluster.pollFirst().write(d);
         }
     }
@@ -49,13 +49,13 @@ public class ClusterWritable implements Writable{
         int vertNum = di.readInt();
         if (vertNum > 0 ){
             for (int j = 0; j < vertNum; j++)
-                cluster.add(new IntWritable(di.readInt()));
+                cluster.add(new LongWritable(di.readInt()));
         }
     }
     
     public String toString(){
         String result = new String();
-        for (IntWritable i : cluster)
+        for (LongWritable i : cluster)
             result = result + "\\s" + i.toString();
         return result;
     }
