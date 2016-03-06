@@ -13,7 +13,7 @@ import org.apache.hadoop.io.*;
  *
  * @author stefano
  */
-public class ClusterWritable extends TreeSet<IntWritable> implements Writable{
+public class ClusterWritable extends TreeSet<IntWritable> implements Writable {
     
     private static final long serialVersionUID = 1L;
     
@@ -24,12 +24,10 @@ public class ClusterWritable extends TreeSet<IntWritable> implements Writable{
     }
     
     public ClusterWritable(TreeSet<IntWritable> cluster){
-        set(new TreeSet<IntWritable>());
         set(cluster);
     }
     
     public ClusterWritable(Iterable<IntWritable> cluster){
-        set(new TreeSet<IntWritable>());
         for (IntWritable i : cluster){
             this.cluster.add(i);
         }
@@ -51,17 +49,16 @@ public class ClusterWritable extends TreeSet<IntWritable> implements Writable{
 
     @Override
     public void write(DataOutput d) throws IOException {
-        int size = cluster.size();
-        d.writeInt(size);
-        if (size > 0){
+        IntWritable size = new IntWritable(cluster.size());
+        size.write(d);
+        if (size.get() > 0){
             for (IntWritable v : cluster)
-                d.writeInt(cluster.pollFirst().get());
+                v.write(d);
         }
     }
 
     @Override
-    public void readFields(DataInput di) throws IOException {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void readFields(DataInput di) throws IOException{
         int vertNum = di.readInt();
         if (vertNum > 0 ){
             for (int j = 0; j < vertNum; j++)
@@ -76,5 +73,30 @@ public class ClusterWritable extends TreeSet<IntWritable> implements Writable{
             result = result + " " + i.toString();
         return result;
     }
+    
+    @Override
+    public int hashCode() {
+        int result = cluster.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ClusterWritable other = (ClusterWritable) obj;
+        if (this.cluster != other.cluster && (this.cluster == null || !this.cluster.equals(other.cluster))) {
+            return false;
+        }
+        return true;
+    }
+
 
 }
