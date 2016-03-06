@@ -13,7 +13,9 @@ import org.apache.hadoop.io.*;
  *
  * @author stefano
  */
-public class ClusterWritable implements Writable{
+public class ClusterWritable extends TreeSet<IntWritable> implements Writable{
+    
+    private static final long serialVersionUID = 1L;
     
     private TreeSet<IntWritable> cluster;
     
@@ -22,7 +24,15 @@ public class ClusterWritable implements Writable{
     }
     
     public ClusterWritable(TreeSet<IntWritable> cluster){
+        set(new TreeSet<IntWritable>());
         set(cluster);
+    }
+    
+    public ClusterWritable(Iterable<IntWritable> cluster){
+        set(new TreeSet<IntWritable>());
+        for (IntWritable i : cluster){
+            this.cluster.add(i);
+        }
     }
     
     public void set(TreeSet<IntWritable> cluster){
@@ -32,6 +42,12 @@ public class ClusterWritable implements Writable{
     public TreeSet<IntWritable> get(){
         return cluster;
     }
+    
+    public void merge(ClusterWritable c){
+        TreeSet<IntWritable> tree = c.get();
+        
+        this.cluster.addAll(c.get());
+    }
 
     @Override
     public void write(DataOutput d) throws IOException {
@@ -39,7 +55,7 @@ public class ClusterWritable implements Writable{
         d.writeInt(size);
         if (size > 0){
             for (IntWritable v : cluster)
-                cluster.pollFirst().write(d);
+                d.writeInt(cluster.pollFirst().get());
         }
     }
 
@@ -53,6 +69,7 @@ public class ClusterWritable implements Writable{
         }
     }
     
+    @Override
     public String toString(){
         String result = new String();
         for (IntWritable i : cluster)

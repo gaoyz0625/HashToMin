@@ -28,6 +28,25 @@ public class HashToMin {
      */
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
         
+//        Job job = new Job();
+//        job.setJarByClass(HashToMin.class);
+//        job.setJobName("To Adjacency Lists");
+//        
+//        FileInputFormat.addInputPath(job, new Path(args[0]));
+//        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+//        
+//        job.setMapperClass(EdgesToAdjacencyListMapper.class);
+//        job.setReducerClass(EdgesToAdjacencyListReducer.class);
+//        job.setNumReduceTasks(1);
+//        
+//        job.setMapOutputKeyClass(IntWritable.class);
+//        job.setMapOutputValueClass(IntWritable.class);
+//
+//        job.setOutputKeyClass(IntWritable.class);
+//        job.setOutputValueClass(Text.class);
+//        
+//        System.exit(job.waitForCompletion(true)? 0 : 1);
+
         Job job = new Job();
         job.setJarByClass(HashToMin.class);
         job.setJobName("To Adjacency Lists");
@@ -35,12 +54,12 @@ public class HashToMin {
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         
-        job.setMapperClass(EdgesToAdjacencyListMapper.class);
-        job.setReducerClass(EdgesToAdjacencyListReducer.class);
+        job.setMapperClass(HashToMinMapper.class);
+        job.setReducerClass(HashToMinReducer.class);
         job.setNumReduceTasks(1);
         
         job.setMapOutputKeyClass(IntWritable.class);
-        job.setMapOutputValueClass(IntWritable.class);
+        job.setMapOutputValueClass(ClusterWritable.class);
 
         job.setOutputKeyClass(IntWritable.class);
         job.setOutputValueClass(Text.class);
