@@ -18,15 +18,14 @@ import org.apache.hadoop.mapreduce.Mapper;
  *
  * @author stefano
  */
-public class EdgesToAdjacencyListMapper extends Mapper<LongWritable,Text,LongWritable,ClusterWritable> {
+public class EdgesToAdjacencyListMapper extends Mapper<LongWritable,Text,IntWritable,IntWritable> {
     @Override
-    public void map(LongWritable vertexFrom, Text vertexTo, Mapper.Context context)
+    public void map(LongWritable key, Text couple, Mapper.Context context)
         throws IOException, InterruptedException{
         
-        TreeSet<LongWritable> t = new TreeSet<LongWritable>();
-        t.add(new LongWritable(Integer.parseInt(vertexTo.toString())));
-          
-            context.write(vertexFrom, new ClusterWritable(t));
+        String[] verteces = couple.toString().split("[\\s\\t]+");
+        
+        context.write(new IntWritable(Integer.parseInt(verteces[0])), new IntWritable(Integer.parseInt(verteces[1])));
        
     }
 }

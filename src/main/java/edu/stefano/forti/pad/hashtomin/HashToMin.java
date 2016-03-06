@@ -37,8 +37,12 @@ public class HashToMin {
         
         job.setMapperClass(EdgesToAdjacencyListMapper.class);
         job.setReducerClass(EdgesToAdjacencyListReducer.class);
+        job.setNumReduceTasks(1);
+        
+        job.setMapOutputKeyClass(IntWritable.class);
+        job.setMapOutputValueClass(IntWritable.class);
 
-        job.setOutputKeyClass(LongWritable.class);
+        job.setOutputKeyClass(IntWritable.class);
         job.setOutputValueClass(Text.class);
         
         System.exit(job.waitForCompletion(true)? 0 : 1);

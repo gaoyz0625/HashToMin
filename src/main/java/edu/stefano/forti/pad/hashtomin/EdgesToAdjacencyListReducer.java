@@ -6,6 +6,7 @@
 package edu.stefano.forti.pad.hashtomin;
 
 import java.io.IOException;
+import java.util.TreeSet;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -17,14 +18,18 @@ import org.apache.hadoop.mapreduce.Reducer;
  *
  * @author stefano
  */
-public class EdgesToAdjacencyListReducer extends Reducer<LongWritable,ClusterWritable,LongWritable,Text> {
+public class EdgesToAdjacencyListReducer extends Reducer<IntWritable,IntWritable,IntWritable,Text> {
 
     @Override
-    public void reduce(LongWritable vertex, Iterable<ClusterWritable> cluster, Context context)
+    public void reduce(IntWritable vertex, Iterable<IntWritable> neighbours, Context context)
         throws IOException, InterruptedException 
     {
-        Text t = new Text (" " + (cluster.toString()));
-        context.write(vertex, t );
+        String tmp = new String();
+        tmp = "";
+        for (IntWritable i: neighbours){
+            tmp = tmp + i.toString() + " ";
+        }
+        context.write(vertex, new Text(tmp));
     }
 
 }
