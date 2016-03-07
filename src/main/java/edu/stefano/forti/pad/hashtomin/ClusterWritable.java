@@ -30,7 +30,7 @@ public class ClusterWritable extends TreeSet<IntWritable> implements Writable {
     public ClusterWritable(Iterable<IntWritable> cluster){
         super();
     }
-    
+
     public TreeSet<IntWritable> get(){
         return cluster;
     }
@@ -68,26 +68,4 @@ public class ClusterWritable extends TreeSet<IntWritable> implements Writable {
         return result;
     }
     
-    @Override
-    public int hashCode() {
-        int result = cluster.hashCode();
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ClusterWritable other = (ClusterWritable) obj;
-        return !(this.cluster != other.cluster && (this.cluster == null || !this.cluster.equals(other.cluster)));
-    }
-
-
 }
