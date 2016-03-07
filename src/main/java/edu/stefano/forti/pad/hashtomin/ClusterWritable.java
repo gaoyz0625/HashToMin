@@ -17,24 +17,18 @@ public class ClusterWritable extends TreeSet<IntWritable> implements Writable {
     
     private static final long serialVersionUID = 1L;
     
-    private TreeSet<IntWritable> cluster;
+    private TreeSet<IntWritable> cluster = new TreeSet<IntWritable>();
     
     public ClusterWritable(){
-        set(new TreeSet<IntWritable>());
+        super();
     }
     
     public ClusterWritable(TreeSet<IntWritable> cluster){
-        set(cluster);
+        super();
     }
     
     public ClusterWritable(Iterable<IntWritable> cluster){
-        for (IntWritable i : cluster){
-            this.cluster.add(i);
-        }
-    }
-    
-    public void set(TreeSet<IntWritable> cluster){
-        this.cluster = cluster;
+        super();
     }
     
     public TreeSet<IntWritable> get(){
@@ -49,18 +43,18 @@ public class ClusterWritable extends TreeSet<IntWritable> implements Writable {
 
     @Override
     public void write(DataOutput d) throws IOException {
-        IntWritable size = new IntWritable(cluster.size());
-        size.write(d);
-        if (size.get() > 0){
-            for (IntWritable v : cluster)
-                v.write(d);
+        int size = this.size();
+        d.writeInt(size);
+        if (size > 0){
+            for (int j = 0; j < size; j++)
+                d.writeInt(this.pollFirst().get());
         }
     }
 
     @Override
     public void readFields(DataInput di) throws IOException{
         int vertNum = di.readInt();
-        if (vertNum > 0 ){
+        if (vertNum > 0){
             for (int j = 0; j < vertNum; j++)
                 cluster.add(new IntWritable(di.readInt()));
         }
@@ -92,10 +86,7 @@ public class ClusterWritable extends TreeSet<IntWritable> implements Writable {
             return false;
         }
         final ClusterWritable other = (ClusterWritable) obj;
-        if (this.cluster != other.cluster && (this.cluster == null || !this.cluster.equals(other.cluster))) {
-            return false;
-        }
-        return true;
+        return !(this.cluster != other.cluster && (this.cluster == null || !this.cluster.equals(other.cluster)));
     }
 
 
