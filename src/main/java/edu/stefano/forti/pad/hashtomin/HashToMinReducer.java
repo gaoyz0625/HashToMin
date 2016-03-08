@@ -6,6 +6,7 @@
 package edu.stefano.forti.pad.hashtomin;
 
 import java.io.IOException;
+import java.util.TreeSet;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -16,22 +17,27 @@ import org.apache.hadoop.mapreduce.Reducer;
  *
  * @author stefano
  */
-public class HashToMinReducer extends Reducer<IntWritable, ClusterWritable, IntWritable, Text> {
+public class HashToMinReducer extends Reducer<IntWritable, Text, IntWritable, Text> {
 
     @Override
-    public void reduce(IntWritable vertex, Iterable<ClusterWritable> clusters, Context context)
+    public void reduce(IntWritable vertex, Iterable<Text> clusters, Context context)
             throws IOException, InterruptedException {
         
-        ClusterWritable cluster = new ClusterWritable();
+        TreeSet<Integer> cluster = new TreeSet();
         
         //update C_v in (v,C_v)
-        for (ClusterWritable c : clusters) {
-            cluster.merge(c);
+        for (Text c : clusters) {
+            String[] verteces = c.toString().split("[\\s\\t]+");
+            for (String v : verteces){
+                cluster.add(Integer.parseInt(v));
+            }
         }
-        
-        
+
         //writes updated (u,C_u) to file
-        context.write(vertex, new Text(cluster.toString()));
+        context.write(vertex,new Text(cluster.toString()
+                    .replaceAll("\\[", "")
+                    .replaceAll("\\]", "")
+                    .replaceAll(",", " ")));
     }
 
 }
