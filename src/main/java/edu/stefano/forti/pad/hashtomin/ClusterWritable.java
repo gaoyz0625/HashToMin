@@ -30,31 +30,30 @@ public class ClusterWritable extends TreeSet<IntWritable> implements Writable {
     public ClusterWritable(Iterable<IntWritable> cluster){
         super();
     }
-
+    
     public TreeSet<IntWritable> get(){
         return cluster;
     }
     
     public void merge(ClusterWritable c){
         TreeSet<IntWritable> tree = c.get();
-        
         this.cluster.addAll(c.get());
     }
 
     @Override
     public void write(DataOutput d) throws IOException {
-        int size = this.size();
+        int size = cluster.size();
         d.writeInt(size);
         if (size > 0){
-            for (int j = 0; j < size; j++)
-                d.writeInt(this.pollFirst().get());
+            for (IntWritable v : cluster)
+                v.write(d);
         }
     }
 
     @Override
     public void readFields(DataInput di) throws IOException{
         int vertNum = di.readInt();
-        if (vertNum > 0){
+        if (vertNum > 0 ){
             for (int j = 0; j < vertNum; j++)
                 cluster.add(new IntWritable(di.readInt()));
         }
@@ -68,4 +67,29 @@ public class ClusterWritable extends TreeSet<IntWritable> implements Writable {
         return result;
     }
     
+    @Override
+    public int hashCode() {
+        int result = cluster.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ClusterWritable other = (ClusterWritable) obj;
+        if (this.cluster != other.cluster && (this.cluster == null || !this.cluster.equals(other.cluster))) {
+            return false;
+        }
+        return true;
+    }
+
+
 }

@@ -57,7 +57,7 @@ public class HashToMin {
         
         job.setMapperClass(HashToMinMapper.class);
         job.setReducerClass(HashToMinReducer.class);
-        job.setNumReduceTasks(2);
+        job.setNumReduceTasks(1);
         
         job.setMapOutputKeyClass(IntWritable.class);
         job.setMapOutputValueClass(ClusterWritable.class);
