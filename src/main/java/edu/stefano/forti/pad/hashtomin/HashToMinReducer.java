@@ -17,27 +17,21 @@ import org.apache.hadoop.mapreduce.Reducer;
  *
  * @author stefano
  */
-public class HashToMinReducer extends Reducer<IntWritable, Text, IntWritable, Text> {
+public class HashToMinReducer extends Reducer<IntWritable, ClusterWritable, IntWritable, Text> {
 
     @Override
-    public void reduce(IntWritable vertex, Iterable<Text> clusters, Context context)
+    public void reduce(IntWritable vertex, Iterable<ClusterWritable> clusters, Context context)
             throws IOException, InterruptedException {
         
-        TreeSet<Integer> cluster = new TreeSet();
+        TreeSet<Integer> cluster = new TreeSet<Integer>();
         
         //update C_v in (v,C_v)
-        for (Text c : clusters) {
-            String[] verteces = c.toString().split("[\\s\\t]+");
-            for (String v : verteces){
-                cluster.add(Integer.parseInt(v));
-            }
+        for (ClusterWritable c : clusters) {      
+            cluster.addAll(c.get());
         }
 
         //writes updated (u,C_u) to file
-        context.write(vertex,new Text(cluster.toString()
-                    .replaceAll("\\[", "")
-                    .replaceAll("\\]", "")
-                    .replaceAll(",", " ")));
+        context.write(vertex,new Text(new ClusterWritable(cluster).toString()));
     }
 
 }

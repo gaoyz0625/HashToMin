@@ -14,47 +14,69 @@ import org.apache.hadoop.io.*;
  * @author stefano
  */
 public class ClusterWritable extends TreeSet<Integer> implements Writable {
-    
+
+    private static final long serialVersionUID = 1L;
+
     private TreeSet<Integer> cluster = new TreeSet<Integer>();
-    
-    public ClusterWritable(){
+
+    public ClusterWritable() {
         super();
     }
-    
-    public void set(TreeSet<Integer> c){
-        cluster = c;
+
+    public ClusterWritable(TreeSet<Integer> c) {
+        set(c);
     }
-    
-    public TreeSet<Integer> get(){
+
+    private void set(TreeSet<Integer> c) {
+        this.cluster = c;
+    }
+
+    public TreeSet<Integer> get() {
         return cluster;
     }
-    
-    
-    public ClusterWritable(TreeSet<Integer> c){
-        cluster = c;
-    }
-    
 
     @Override
     public void write(DataOutput d) throws IOException {
-        int size = this.size();
-        if (size > 0){
-            for (Integer i : cluster){
-                d.writeInt(i);
-            }
+        int size = cluster.size();
+        d.writeInt(size);
+
+        for (Integer i : cluster) {
+            d.writeInt(i);
         }
     }
 
     @Override
     public void readFields(DataInput di) throws IOException {
-        int size = this.size();
-        if (size > 0){
-            for (int i = 0; i < size; i++){
+        if (this.cluster != null) {
+            this.cluster.clear();
+        } else {
+            this.cluster = new TreeSet<Integer>();
+        }
+
+        int size = di.readInt();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
                 cluster.add(di.readInt());
             }
         }
     }
 
+    @Override
+    public String toString() {
+        return cluster.toString().replaceAll("\\[", "")
+                .replaceAll("\\]", "")
+                .replaceAll(",", " ");
+    }
     
-}
+     
+ @Override
+ public int hashCode() {
+ 
+  int result = 0;
+  result = this.cluster.hashCode();
+  return result;
+ }
+ 
 
+
+}

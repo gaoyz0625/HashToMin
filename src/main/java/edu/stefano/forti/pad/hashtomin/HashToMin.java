@@ -60,7 +60,7 @@ public class HashToMin {
         job.setNumReduceTasks(1);
         
         job.setMapOutputKeyClass(IntWritable.class);
-        job.setMapOutputValueClass(Text.class);
+        job.setMapOutputValueClass(ClusterWritable.class);
 
         job.setOutputKeyClass(IntWritable.class);
         job.setOutputValueClass(Text.class);

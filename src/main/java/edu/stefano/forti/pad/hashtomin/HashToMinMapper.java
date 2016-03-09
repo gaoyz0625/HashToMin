@@ -16,7 +16,7 @@ import org.apache.hadoop.mapreduce.Mapper;
  *
  * @author stefano
  */
-public class HashToMinMapper extends Mapper<LongWritable,Text,IntWritable,Text> {
+public class HashToMinMapper extends Mapper<LongWritable,Text,IntWritable,ClusterWritable> {
 
     @Override
     public void map(LongWritable key, Text couple, Mapper.Context context)
@@ -30,20 +30,14 @@ public class HashToMinMapper extends Mapper<LongWritable,Text,IntWritable,Text> 
             cluster.add(Integer.parseInt(v));         
         }
         
-        Integer vMin = cluster.first();
-        context.write(new IntWritable(vMin),new Text(cluster.toString()
-                    .replaceAll("\\[", "")
-                    .replaceAll("\\]", "")
-                    .replaceAll(",", " ")));
+        context.write(new IntWritable(cluster.first()), new ClusterWritable(cluster));
        
         //builds (u, v_min)
         TreeSet<Integer> cTmp = new TreeSet();
-        cTmp.add(vMin);
+        cTmp.add(cluster.first());
+        
         for (Integer u : cluster){
-            context.write(new IntWritable(u), new Text(cTmp.toString()
-                    .replaceAll("\\[", "")
-                    .replaceAll("\\]", "")
-                    .replaceAll(",", " ")));
+            context.write(new IntWritable(u), new ClusterWritable(cTmp));
         }
        
     } 
