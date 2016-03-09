@@ -13,59 +13,48 @@ import org.apache.hadoop.io.*;
  *
  * @author stefano
  */
-public class ClusterWritable extends TreeSet<IntWritable> implements Writable {
+public class ClusterWritable extends TreeSet<Integer> implements Writable {
     
-    private static final long serialVersionUID = 1L;
-    
-    private TreeSet<IntWritable> cluster = new TreeSet<IntWritable>();
+    private TreeSet<Integer> cluster = new TreeSet<Integer>();
     
     public ClusterWritable(){
         super();
     }
     
-    public ClusterWritable(TreeSet<IntWritable> cluster){
-        super();
+    public void set(TreeSet<Integer> c){
+        cluster = c;
     }
     
-    public ClusterWritable(Iterable<IntWritable> cluster){
-        super();
-    }
-
-    public TreeSet<IntWritable> get(){
+    public TreeSet<Integer> get(){
         return cluster;
     }
     
-    public void merge(ClusterWritable c){
-        TreeSet<IntWritable> tree = c.get();
-        this.cluster.addAll(c.get());
+    
+    public ClusterWritable(TreeSet<Integer> c){
+        cluster = c;
     }
+    
 
     @Override
     public void write(DataOutput d) throws IOException {
         int size = this.size();
-        d.writeInt(size);
         if (size > 0){
-            for (int j = 0; j < size; j++)
-                d.writeInt(this.pollFirst().get());
+            for (Integer i : cluster){
+                d.writeInt(i);
+            }
         }
     }
 
     @Override
-    public void readFields(DataInput di) throws IOException{
-        int vertNum = di.readInt();
-        if (vertNum > 0){
-            for (int j = 0; j < vertNum; j++)
-                cluster.add(new IntWritable(di.readInt()));
+    public void readFields(DataInput di) throws IOException {
+        int size = this.size();
+        if (size > 0){
+            for (int i = 0; i < size; i++){
+                cluster.add(di.readInt());
+            }
         }
     }
-    
-    @Override
-    public String toString(){
-        String result = new String();
-        for (IntWritable i : cluster)
-            result = result + " " + i.toString();
-        return result;
-    }
+
     
 }
 
