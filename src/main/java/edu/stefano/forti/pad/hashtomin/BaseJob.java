@@ -16,18 +16,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.util.Tool;
 
-/***
- * 
- * @author Deepika Mohan
- * 
- * This is the Base class for the graph algorithm tool kit.
- * This contains the methods to set the several classes that are related to a job.
- * Each program can set the classes specific to its implementation.
- * 
- * 
- * 
- *
- */
 public abstract class BaseJob extends Configured implements Tool {
 
 	// method to set the configuration for the job and the mapper and the reducer classes
