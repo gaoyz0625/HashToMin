@@ -88,9 +88,10 @@ public class HashToMin extends BaseJob {
         Job job;
         long iterate = 1;
         int iterations = 0;
+        boolean goOn = true;
         
 
-        while (iterate > 0) {
+        while (goOn) {
             job = getJobConf(strings);
             String input, output;
 
@@ -108,6 +109,7 @@ public class HashToMin extends BaseJob {
             job.waitForCompletion(true);
 
             Counters counters = job.getCounters();
+            goOn = (iterate != counters.findCounter(StopCondition.MERGED).getValue());
             iterate = counters.findCounter(StopCondition.MERGED).getValue();
             counters.findCounter(StopCondition.MERGED).setValue(0);
             iterations++;

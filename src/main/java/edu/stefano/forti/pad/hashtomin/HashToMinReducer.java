@@ -24,7 +24,6 @@ public class HashToMinReducer extends Reducer<IntWritable, ClusterWritable, IntW
             throws IOException, InterruptedException {
 
         TreeSet<Integer> cluster = new TreeSet<Integer>();
-        int i;
 
         //update C_v in (v,C_v)
         for (ClusterWritable c : clusters) {
