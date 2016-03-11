@@ -5,21 +5,30 @@
  */
 package edu.stefano.forti.pad.hashtomin;
 
-import java.io.IOException;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Counters;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.partition.KeyFieldBasedPartitioner;
+import org.apache.hadoop.util.*;
+
+enum StopCondition {
+    MERGED
+}
 
 /**
  *
  * @author stefano
  */
-public class HashToMin {
+public class HashToMin extends Configured implements Tool {
+
+    enum StopCondition {
+        MERGED
+    }
 
     /**
      * @param args the command line arguments
@@ -27,46 +36,54 @@ public class HashToMin {
      * @throws java.lang.InterruptedException
      * @throws java.lang.ClassNotFoundException
      */
-    public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
+    public static void main(String[] args) throws Exception {
+        int exitCode = ToolRunner.run(new Configuration(),new HashToMin(), args);
+        System.exit(exitCode);
         
-//        Job job = new Job();
-//        job.setJarByClass(HashToMin.class);
-//        job.setJobName("To Adjacency Lists");
-//        
-//        FileInputFormat.addInputPath(job, new Path(args[0]));
-//        FileOutputFormat.setOutputPath(job, new Path(args[1]));
-//        
-//        job.setMapperClass(EdgesToAdjacencyListMapper.class);
-//        job.setReducerClass(EdgesToAdjacencyListReducer.class);
-//        job.setNumReduceTasks(1);
-//        
-//        job.setMapOutputKeyClass(IntWritable.class);
-//        job.setMapOutputValueClass(IntWritable.class);
-//
-//        job.setOutputKeyClass(IntWritable.class);
-//        job.setOutputValueClass(Text.class);
-//        
-//        System.exit(job.waitForCompletion(true)? 0 : 1);
+    }
 
+    @Override
+    public int run(String[] strings) throws Exception {
+        
         Job job = new Job();
         job.setJarByClass(HashToMin.class);
         job.setJobName("To Adjacency Lists");
-        
-        FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
-        
         job.setMapperClass(HashToMinMapper.class);
         job.setReducerClass(HashToMinReducer.class);
         job.setNumReduceTasks(1);
-        
+
         job.setMapOutputKeyClass(IntWritable.class);
         job.setMapOutputValueClass(ClusterWritable.class);
 
         job.setOutputKeyClass(IntWritable.class);
         job.setOutputValueClass(Text.class);
+        long iterate = 1;
+        int iterations = 0;
+        boolean exitCode = false;
+        String input, output = null;
+     
         
-        System.exit(job.waitForCompletion(true)? 0 : 1);
+        while (iterate > 0){
+            
+        if (iterations == 0){
+            input = strings[0];
+        } else
+        {
+            input = strings[1]+iterations;
+        }
+        output = strings[1] + (iterations + 1);
+        FileInputFormat.addInputPath(job, new Path(input));
+        FileOutputFormat.setOutputPath(job, new Path(output));
+        exitCode=job.waitForCompletion(true);
         
+        Counters counters = job.getCounters();
+        iterate = counters.findCounter(StopCondition.MERGED).getValue();
+        counters.findCounter(StopCondition.MERGED).setValue(0);
+        iterations++;
+        }
+   
+        
+        return exitCode ? 0 : 1;
     }
-    
+
 }

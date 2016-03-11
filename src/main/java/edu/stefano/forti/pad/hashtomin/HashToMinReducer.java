@@ -13,6 +13,8 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 
+
+
 /**
  *
  * @author stefano
@@ -24,10 +26,13 @@ public class HashToMinReducer extends Reducer<IntWritable, ClusterWritable, IntW
             throws IOException, InterruptedException {
         
         TreeSet<Integer> cluster = new TreeSet<Integer>();
+        int i;
         
         //update C_v in (v,C_v)
         for (ClusterWritable c : clusters) {      
-            cluster.addAll(c.get());
+            boolean changed = cluster.addAll(c.get());
+            if (changed)
+               context.getCounter(StopCondition.MERGED).increment(1);
         }
 
         //writes updated (u,C_u) to file
