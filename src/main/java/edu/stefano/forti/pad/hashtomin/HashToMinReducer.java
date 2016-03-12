@@ -28,8 +28,7 @@ public class HashToMinReducer extends Reducer<IntWritable, ClusterWritable, IntW
         boolean changed = false; 
         int i = 0;
         //update C_v in (v,C_v)
-        for (ClusterWritable c : clusters) {
-            
+        for (ClusterWritable c : clusters) {   
             if (i != 0)
                 changed = changed || cluster.addAll(c.get());
             else

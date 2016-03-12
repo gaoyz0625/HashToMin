@@ -89,7 +89,7 @@ public class HashToMin extends BaseJob {
 
             @Override
             public int getNumReduceTasks() {
-                return 1;
+                return 0;
             }
         };
 
@@ -142,7 +142,7 @@ public class HashToMin extends BaseJob {
 
             @Override
             public int getNumReduceTasks() {
-                return 1;
+                return 0;
             }
         };
 
