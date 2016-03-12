@@ -25,13 +25,11 @@ public class HashToMinReducer extends Reducer<IntWritable, ClusterWritable, IntW
 
         TreeSet<Integer> cluster = new TreeSet<Integer>();
         int v = vertex.get();
-        boolean changed = false; 
-        int i = 0;
         //update C_v in (v,C_v)
         for (ClusterWritable c : clusters) {   
             cluster.addAll(c.get());
         }
-        //check whether there has been convergence to <u, {v_min}>
+        //check whether there has been convergence to <u, {v_min}> and <v_min, C> couples
         if (cluster.size() > 1 && v > cluster.first()) {
                 context.getCounter(StopCondition.GO_ON).increment(1);
             }
