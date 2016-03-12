@@ -89,7 +89,7 @@ public class HashToMin extends BaseJob {
 
             @Override
             public int getNumReduceTasks() {
-                return 0;
+                return 1;
             }
         };
 
@@ -142,7 +142,7 @@ public class HashToMin extends BaseJob {
 
             @Override
             public int getNumReduceTasks() {
-                return 0;
+                return 1;
             }
         };
 
@@ -158,11 +158,9 @@ public class HashToMin extends BaseJob {
         int iterations = 0;
         boolean goOn = true;
         String input, output = null;
-        
 
         while (iterate > 0) {
             job = getJobConf(strings);
-            
 
             if (iterations == 0) {
                 input = strings[0];

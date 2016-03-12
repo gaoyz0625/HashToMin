@@ -29,14 +29,10 @@ public class HashToMinReducer extends Reducer<IntWritable, ClusterWritable, IntW
         int i = 0;
         //update C_v in (v,C_v)
         for (ClusterWritable c : clusters) {   
-            if (i != 0)
-                changed = changed || cluster.addAll(c.get());
-            else
-                cluster.addAll(c.get());
-            i++;
+            cluster.addAll(c.get());
         }
         //check whether there has been convergence to <u, {v_min}>
-        if (i > 1 && changed && v > cluster.first()) {
+        if (cluster.size() > 1 && v > cluster.first()) {
                 context.getCounter(StopCondition.GO_ON).increment(1);
             }
         
