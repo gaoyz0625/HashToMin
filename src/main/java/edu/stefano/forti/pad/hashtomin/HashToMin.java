@@ -177,7 +177,6 @@ public class HashToMin extends BaseJob {
             job.waitForCompletion(true);
 
             Counters counters = job.getCounters();
-            goOn = (iterate != counters.findCounter(StopCondition.MERGED).getValue());
             iterate = counters.findCounter(StopCondition.MERGED).getValue();
             counters.findCounter(StopCondition.MERGED).setValue(0);
             iterations++;

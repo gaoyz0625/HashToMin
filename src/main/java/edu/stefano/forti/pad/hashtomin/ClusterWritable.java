@@ -67,16 +67,13 @@ public class ClusterWritable extends TreeSet<Integer> implements Writable {
                 .replaceAll("\\]", "")
                 .replaceAll(",", " ");
     }
-    
-     
- @Override
- public int hashCode() {
- 
-  int result = 0;
-  result = this.cluster.hashCode();
-  return result;
- }
- 
 
+    @Override
+    public int hashCode() {
+
+        int result = 0;
+        result = this.cluster.hashCode();
+        return result;
+    }
 
 }
