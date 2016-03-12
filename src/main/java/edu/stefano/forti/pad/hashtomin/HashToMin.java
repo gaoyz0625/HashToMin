@@ -26,7 +26,7 @@ import org.apache.hadoop.util.*;
 public class HashToMin extends BaseJob {
 
     enum StopCondition {
-        MERGED
+        GO_ON
     }
 
     /**
@@ -177,8 +177,8 @@ public class HashToMin extends BaseJob {
             job.waitForCompletion(true);
 
             Counters counters = job.getCounters();
-            iterate = counters.findCounter(StopCondition.MERGED).getValue();
-            counters.findCounter(StopCondition.MERGED).setValue(0);
+            iterate = counters.findCounter(StopCondition.GO_ON).getValue();
+            counters.findCounter(StopCondition.GO_ON).setValue(0);
             iterations++;
         }
         
