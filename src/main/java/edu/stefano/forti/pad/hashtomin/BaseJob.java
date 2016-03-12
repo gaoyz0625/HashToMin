@@ -11,6 +11,7 @@ package edu.stefano.forti.pad.hashtomin;
  */
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -22,25 +23,14 @@ public abstract class BaseJob extends Configured implements Tool {
 	protected Job setupJob(String jobName,JobInfo jobInfo) throws Exception {
 		
 		Job job = new Job(new Configuration(), jobName);
-
-		// set the several classes
 		job.setJarByClass(jobInfo.getJarByClass());
-
-		//set the mapper class
 		job.setMapperClass(jobInfo.getMapperClass());
-
-		//the combiner class is optional, so set it only if it is required by the program
 		if (jobInfo.getCombinerClass() != null)
 			job.setCombinerClass(jobInfo.getCombinerClass());
-
-		//set the reducer class
 		job.setReducerClass(jobInfo.getReducerClass());
-		
-		//the number of reducers is set to 3, this can be altered according to the program's requirements
-		job.setNumReduceTasks(3);
-	
-		// set the type of the output key and value for the Map & Reduce
-		// functions
+		job.setNumReduceTasks(jobInfo.getNumReduceTasks());
+                job.setMapOutputKeyClass(jobInfo.getMapOutputKeyClass());
+                job.setMapOutputValueClass(jobInfo.getMapOutputValueClass());
 		job.setOutputKeyClass(jobInfo.getOutputKeyClass());
 		job.setOutputValueClass(jobInfo.getOutputValueClass());
 		
@@ -54,6 +44,9 @@ public abstract class BaseJob extends Configured implements Tool {
 		public abstract Class<? extends Reducer> getReducerClass();
 		public abstract Class<?> getOutputKeyClass();
 		public abstract Class<?> getOutputValueClass();
+                public abstract Class<?> getMapOutputKeyClass();
+                public abstract Class<?> getMapOutputValueClass();
+                public abstract int getNumReduceTasks();
 		
  	}
 }

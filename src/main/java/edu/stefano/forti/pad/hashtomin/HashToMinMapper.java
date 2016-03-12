@@ -24,7 +24,7 @@ public class HashToMinMapper extends Mapper<LongWritable,Text,IntWritable,Cluste
         
         String[] verteces = couple.toString().split("[\\s\\t]+");
         TreeSet<Integer> cluster = new TreeSet();
-        
+    
         //builds (v_min, C_v)
         for (String v : verteces) {
             cluster.add(Integer.parseInt(v));         

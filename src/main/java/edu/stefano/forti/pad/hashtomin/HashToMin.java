@@ -76,9 +76,77 @@ public class HashToMin extends BaseJob {
             public Class<? extends Reducer> getReducerClass() {
                 return HashToMinReducer.class;
             }
+
+            @Override
+            public Class<?> getMapOutputKeyClass() {
+                return IntWritable.class;
+            }
+
+            @Override
+            public Class<?> getMapOutputValueClass() {
+                return ClusterWritable.class;
+            }
+
+            @Override
+            public int getNumReduceTasks() {
+                return 1;
+            }
         };
 
         return setupJob("hashtomin", jobInfo);
+
+    }
+    
+        private Job getExportConf(String[] args) throws Exception {
+
+        JobInfo jobInfo = new JobInfo() {
+            @Override
+            public Class<? extends Reducer> getCombinerClass() {
+                return null;
+            }
+
+            @Override
+            public Class<?> getJarByClass() {
+                return HashToMin.class;
+            }
+
+            @Override
+            public Class<? extends Mapper> getMapperClass() {
+                return ExportMapper.class;
+            }
+
+            @Override
+            public Class<?> getOutputKeyClass() {
+                return IntWritable.class;
+            }
+
+            @Override
+            public Class<?> getOutputValueClass() {
+                return Text.class;
+            }
+
+            @Override
+            public Class<? extends Reducer> getReducerClass() {
+                return ExportReducer.class;
+            }
+
+            @Override
+            public Class<?> getMapOutputKeyClass() {
+                return IntWritable.class;
+            }
+
+            @Override
+            public Class<?> getMapOutputValueClass() {
+                return ClusterWritable.class;
+            }
+
+            @Override
+            public int getNumReduceTasks() {
+                return 1;
+            }
+        };
+
+        return setupJob("export", jobInfo);
 
     }
 
@@ -89,11 +157,12 @@ public class HashToMin extends BaseJob {
         long iterate = 1;
         int iterations = 0;
         boolean goOn = true;
+        String input, output = null;
         
 
-        while (goOn) {
+        while (iterate > 0) {
             job = getJobConf(strings);
-            String input, output;
+            
 
             if (iterations == 0) {
                 input = strings[0];
@@ -104,8 +173,7 @@ public class HashToMin extends BaseJob {
             output = strings[1] + (iterations + 1);
             FileInputFormat.setInputPaths(job, new Path(input));
             FileOutputFormat.setOutputPath(job, new Path(output));
-            job.setMapOutputKeyClass(IntWritable.class);
-            job.setMapOutputValueClass(ClusterWritable.class);
+
             job.waitForCompletion(true);
 
             Counters counters = job.getCounters();
@@ -114,7 +182,14 @@ public class HashToMin extends BaseJob {
             counters.findCounter(StopCondition.MERGED).setValue(0);
             iterations++;
         }
-
+        
+        Job export;
+        
+        export = getExportConf(strings);
+        FileInputFormat.setInputPaths(export, new Path(output));
+        FileOutputFormat.setOutputPath(export, new Path("result"));
+        export.waitForCompletion(true);
+        
         return 0;
     }
 

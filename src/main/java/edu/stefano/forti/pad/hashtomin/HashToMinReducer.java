@@ -24,15 +24,18 @@ public class HashToMinReducer extends Reducer<IntWritable, ClusterWritable, IntW
             throws IOException, InterruptedException {
 
         TreeSet<Integer> cluster = new TreeSet<Integer>();
-
+        int v = vertex.get();
+        boolean changed = false;
+        
         //update C_v in (v,C_v)
         for (ClusterWritable c : clusters) {
-            boolean changed = cluster.addAll(c.get());
-            if (changed) {
+            changed = cluster.addAll(c.get());
+        }
+        
+        if (changed && v > cluster.first()) {
                 context.getCounter(StopCondition.MERGED).increment(1);
             }
-        }
-
+        
         //writes updated (u,C_u) to file
         context.write(vertex, new Text(new ClusterWritable(cluster).toString()));
     }

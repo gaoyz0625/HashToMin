@@ -16,17 +16,22 @@ import org.apache.hadoop.mapreduce.Mapper;
  *
  * @author stefano
  */
-public class ExportMapper extends Mapper<LongWritable,Text,IntWritable,Text> {
+public class ExportMapper extends Mapper<LongWritable,Text,IntWritable,ClusterWritable> {
 
     @Override
-    public void map(LongWritable key, Text couple, Context context)
+    public void map(LongWritable key, Text clust, Context context)
         throws IOException, InterruptedException{
         
-        String[] verteces = couple.toString().split("[\\s\\t]+");
-        TreeSet<Integer> cluster = new TreeSet();
+        String[] verteces = clust.toString().split("[\\s\\t]+");
+        
+        TreeSet<Integer> tree = new TreeSet<Integer>();
+        
+        for (String t : verteces){
+            tree.add(Integer.parseInt(t));
+        }
         
         if ((Integer.parseInt(verteces[0])) == (Integer.parseInt(verteces[1]))){
-            context.write(new IntWritable((Integer.parseInt(verteces[0]))), new Text(couple) );
+            context.write(new IntWritable((Integer.parseInt(verteces[0]))), new ClusterWritable(tree) );
         }
        
     } 
