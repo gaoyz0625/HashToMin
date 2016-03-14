@@ -17,8 +17,6 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.*;
 
-
-
 /**
  *
  * @author stefano
@@ -37,14 +35,10 @@ public class HashToMin extends BaseJob {
      */
     public static void main(String[] args) throws Exception {
         int exitCode = ToolRunner.run(new Configuration(), new HashToMin(), args);
-        if (args.length != 2) {
-            System.err.println("Usage: <in> <output name> ");
-        }
         System.exit(exitCode);
-
     }
 
-    private Job getJobConf(String[] args) throws Exception {
+    private Job getHashToMinJobConf(String[] args) throws Exception {
 
         JobInfo jobInfo = new JobInfo() {
             @Override
@@ -89,15 +83,15 @@ public class HashToMin extends BaseJob {
 
             @Override
             public int getNumReduceTasks() {
-                return 1;
+                return 3;
             }
         };
 
         return setupJob("hashtomin", jobInfo);
 
     }
-    
-        private Job getExportConf(String[] args) throws Exception {
+
+    private Job getExportJobConf(String[] args) throws Exception {
 
         JobInfo jobInfo = new JobInfo() {
             @Override
@@ -153,14 +147,13 @@ public class HashToMin extends BaseJob {
     @Override
     public int run(String[] strings) throws Exception {
 
-        Job job;
+        Job hashToMinJob;
         long iterate = 1;
         int iterations = 0;
-        boolean goOn = true;
         String input, output = null;
 
         while (iterate > 0) {
-            job = getJobConf(strings);
+            hashToMinJob = getHashToMinJobConf(strings);
 
             if (iterations == 0) {
                 input = strings[0];
@@ -169,24 +162,24 @@ public class HashToMin extends BaseJob {
             }
 
             output = strings[1] + (iterations + 1);
-            FileInputFormat.setInputPaths(job, new Path(input));
-            FileOutputFormat.setOutputPath(job, new Path(output));
+            FileInputFormat.setInputPaths(hashToMinJob, new Path(input));
+            FileOutputFormat.setOutputPath(hashToMinJob, new Path(output));
 
-            job.waitForCompletion(true);
+            hashToMinJob.waitForCompletion(true);
 
-            Counters counters = job.getCounters();
+            Counters counters = hashToMinJob.getCounters();
             iterate = counters.findCounter(StopCondition.GO_ON).getValue();
             counters.findCounter(StopCondition.GO_ON).setValue(0);
             iterations++;
         }
-        
-        Job export;
-        
-        export = getExportConf(strings);
-        FileInputFormat.setInputPaths(export, new Path(output));
-        FileOutputFormat.setOutputPath(export, new Path("result"));
-        export.waitForCompletion(true);
-        
+
+        Job exportJob;
+
+        exportJob = getExportJobConf(strings);
+        FileInputFormat.setInputPaths(exportJob, new Path(output));
+        FileOutputFormat.setOutputPath(exportJob, new Path("result"));
+        exportJob.waitForCompletion(true);
+
         return 0;
     }
 
