@@ -40,7 +40,7 @@ import org.apache.hadoop.util.*;
  *
  * @author stefano
  */
-public class HashToMin extends BaseJob {
+public class Verifier extends BaseJob {
 
     public static void main(String[] args) throws Exception {
         if (args.length == 3) {
@@ -54,38 +54,20 @@ public class HashToMin extends BaseJob {
     @Override
     public int run(String[] strings) throws Exception {
 
-        Job hashToMinJob;
-        long iterate = 1;
-        int iterations = 0;
         String input, output = null;
+        Job exportJob;
 
-        while (iterate > 0) {
-            hashToMinJob = getHashToMinJobConf(strings);
-
-            if (iterations == 0) {
-                input = strings[0];
-            } else {
-                input = strings[1] + iterations;
-            }
-
-            output = strings[1] + (iterations + 1);
-            FileInputFormat.setInputPaths(hashToMinJob, new Path(input));
-            FileOutputFormat.setOutputPath(hashToMinJob, new Path(output));
-
-            hashToMinJob.waitForCompletion(true);
-
-            Counters counters = hashToMinJob.getCounters();
-            iterate = counters.findCounter(JobCounters.GO_ON).getValue();
-            counters.findCounter(JobCounters.GO_ON).setValue(0);
-            iterations++;
-        }
+        exportJob = getVerifierJobConf(strings);
+        FileInputFormat.setInputPaths(exportJob, new Path(output));
+        FileOutputFormat.setOutputPath(exportJob, new Path("result"));
+        exportJob.waitForCompletion(true);
 
         return 0;
     }
 
-    private Job getHashToMinJobConf(final String[] args) throws Exception {
+    private Job getVerifierJobConf(String[] args) throws Exception {
 
-        JobInfo jobInfo = new JobInfo() {
+        BaseJob.JobInfo jobInfo = new BaseJob.JobInfo() {
             @Override
             public Class<? extends Reducer> getCombinerClass() {
                 return null;
@@ -98,7 +80,7 @@ public class HashToMin extends BaseJob {
 
             @Override
             public Class<? extends Mapper> getMapperClass() {
-                return HashToMinMapper.class;
+                return ExportMapper.class;
             }
 
             @Override
@@ -113,7 +95,7 @@ public class HashToMin extends BaseJob {
 
             @Override
             public Class<? extends Reducer> getReducerClass() {
-                return HashToMinReducer.class;
+                return ExportReducer.class;
             }
 
             @Override
@@ -128,14 +110,12 @@ public class HashToMin extends BaseJob {
 
             @Override
             public int getNumReduceTasks() {
-                return Integer.parseInt(args[2]);
+                return 1;
             }
         };
 
-        return setupJob("hashtomin", jobInfo);
+        return setupJob("verifier", jobInfo);
 
     }
-
-    
 
 }
