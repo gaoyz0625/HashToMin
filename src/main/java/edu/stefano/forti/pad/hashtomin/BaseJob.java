@@ -20,7 +20,6 @@ public abstract class BaseJob extends Configured implements Tool {
 
 	// method to set the configuration for the job and the mapper and the reducer classes
 	protected Job setupJob(String jobName,JobInfo jobInfo) throws Exception {
-		
 		Job job = new Job(new Configuration(), jobName);
 		job.setJarByClass(jobInfo.getJarByClass());
 		job.setMapperClass(jobInfo.getMapperClass());

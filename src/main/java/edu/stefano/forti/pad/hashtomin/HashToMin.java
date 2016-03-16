@@ -27,18 +27,55 @@ public class HashToMin extends BaseJob {
         GO_ON
     }
 
-    /**
-     * @param args the command line arguments
-     * @throws java.io.IOException
-     * @throws java.lang.InterruptedException
-     * @throws java.lang.ClassNotFoundException
-     */
     public static void main(String[] args) throws Exception {
-        int exitCode = ToolRunner.run(new Configuration(), new HashToMin(), args);
-        System.exit(exitCode);
+        if (args.length == 3) {
+            int exitCode = ToolRunner.run(new Configuration(), new HashToMin(), args);
+            System.exit(exitCode);
+        } else {
+            System.out.print("Incorrect use: you should specify input file, output file and number of reduce tasks.");
+        }
     }
 
-    private Job getHashToMinJobConf(String[] args) throws Exception {
+    @Override
+    public int run(String[] strings) throws Exception {
+
+        Job hashToMinJob;
+        long iterate = 1;
+        int iterations = 0;
+        String input, output = null;
+
+        while (iterate > 0) {
+            hashToMinJob = getHashToMinJobConf(strings);
+
+            if (iterations == 0) {
+                input = strings[0];
+            } else {
+                input = strings[1] + iterations;
+            }
+
+            output = strings[1] + (iterations + 1);
+            FileInputFormat.setInputPaths(hashToMinJob, new Path(input));
+            FileOutputFormat.setOutputPath(hashToMinJob, new Path(output));
+
+            hashToMinJob.waitForCompletion(true);
+
+            Counters counters = hashToMinJob.getCounters();
+            iterate = counters.findCounter(StopCondition.GO_ON).getValue();
+            counters.findCounter(StopCondition.GO_ON).setValue(0);
+            iterations++;
+        }
+
+        Job exportJob;
+
+        exportJob = getExportJobConf(strings);
+        FileInputFormat.setInputPaths(exportJob, new Path(output));
+        FileOutputFormat.setOutputPath(exportJob, new Path("result"));
+        exportJob.waitForCompletion(true);
+
+        return 0;
+    }
+
+    private Job getHashToMinJobConf(final String[] args) throws Exception {
 
         JobInfo jobInfo = new JobInfo() {
             @Override
@@ -83,7 +120,7 @@ public class HashToMin extends BaseJob {
 
             @Override
             public int getNumReduceTasks() {
-                return 3;
+                return Integer.parseInt(args[2]);
             }
         };
 
@@ -142,45 +179,6 @@ public class HashToMin extends BaseJob {
 
         return setupJob("export", jobInfo);
 
-    }
-
-    @Override
-    public int run(String[] strings) throws Exception {
-
-        Job hashToMinJob;
-        long iterate = 1;
-        int iterations = 0;
-        String input, output = null;
-
-        while (iterate > 0) {
-            hashToMinJob = getHashToMinJobConf(strings);
-
-            if (iterations == 0) {
-                input = strings[0];
-            } else {
-                input = strings[1] + iterations;
-            }
-
-            output = strings[1] + (iterations + 1);
-            FileInputFormat.setInputPaths(hashToMinJob, new Path(input));
-            FileOutputFormat.setOutputPath(hashToMinJob, new Path(output));
-
-            hashToMinJob.waitForCompletion(true);
-
-            Counters counters = hashToMinJob.getCounters();
-            iterate = counters.findCounter(StopCondition.GO_ON).getValue();
-            counters.findCounter(StopCondition.GO_ON).setValue(0);
-            iterations++;
-        }
-
-        Job exportJob;
-
-        exportJob = getExportJobConf(strings);
-        FileInputFormat.setInputPaths(exportJob, new Path(output));
-        FileOutputFormat.setOutputPath(exportJob, new Path("result"));
-        exportJob.waitForCompletion(true);
-
-        return 0;
     }
 
 }
