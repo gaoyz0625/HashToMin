@@ -32,6 +32,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.*;
 
 /**
@@ -62,7 +63,9 @@ public class Verifier extends BaseJob {
 
         verifierJob = getVerifierJobConf(strings);
         FileInputFormat.setInputPaths(verifierJob, input);
+        FileOutputFormat.setOutputPath(verifierJob, new Path ("tmp"));
         verifierJob.waitForCompletion(true);
+        System.out.println("***********ERRORS: "+verifierJob.getCounters().findCounter(JobCounters.DUPLICATES).getValue());
 
         return 0;
     }
