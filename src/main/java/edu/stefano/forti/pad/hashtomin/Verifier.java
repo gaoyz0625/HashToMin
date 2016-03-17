@@ -28,12 +28,10 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Counters;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.*;
 
 /**
@@ -41,11 +39,17 @@ import org.apache.hadoop.util.*;
  * @author stefano
  */
 public class Verifier extends BaseJob {
+    
+    private Path input;
+    
+    public Verifier (Path input){
+        this.input = input;
+    }
 
     public static void main(String[] args) throws Exception {
         if (args.length == 3) {
-            int exitCode = ToolRunner.run(new Configuration(), new HashToMin(), args);
-            System.exit(exitCode);
+//            int exitCode = ToolRunner.run(new Configuration(), new Verifier(), args);
+//            System.exit(exitCode);
         } else {
             System.out.print("Incorrect use: you should specify input file, output file and number of reduce tasks.");
         }
@@ -54,13 +58,11 @@ public class Verifier extends BaseJob {
     @Override
     public int run(String[] strings) throws Exception {
 
-        String input, output = null;
-        Job exportJob;
+        Job verifierJob;
 
-        exportJob = getVerifierJobConf(strings);
-        FileInputFormat.setInputPaths(exportJob, new Path(output));
-        FileOutputFormat.setOutputPath(exportJob, new Path("result"));
-        exportJob.waitForCompletion(true);
+        verifierJob = getVerifierJobConf(strings);
+        FileInputFormat.setInputPaths(verifierJob, input);
+        verifierJob.waitForCompletion(true);
 
         return 0;
     }

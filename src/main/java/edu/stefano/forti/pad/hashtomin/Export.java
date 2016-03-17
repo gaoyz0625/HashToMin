@@ -41,11 +41,17 @@ import org.apache.hadoop.util.*;
  * @author stefano
  */
 public class Export extends BaseJob {
-
+    private Path input, output;
+    
+    public Export(Path input, Path output){
+        this.input = input;
+        this.output = output;
+    }
+    
     public static void main(String[] args) throws Exception {
         if (args.length == 3) {
-            int exitCode = ToolRunner.run(new Configuration(), new HashToMin(), args);
-            System.exit(exitCode);
+//            int exitCode = ToolRunner.run(new Configuration(), new Export(), args);
+//            System.exit(exitCode);
         } else {
             System.out.print("Incorrect use: you should specify input file, output file and number of reduce tasks.");
         }
@@ -54,12 +60,12 @@ public class Export extends BaseJob {
     @Override
     public int run(String[] strings) throws Exception {
 
-        String input, output = null;
+        
         Job exportJob;
 
         exportJob = getExportJobConf(strings);
-        FileInputFormat.setInputPaths(exportJob, new Path(output));
-        FileOutputFormat.setOutputPath(exportJob, new Path("result"));
+        FileInputFormat.setInputPaths(exportJob, input);
+        FileOutputFormat.setOutputPath(exportJob, output);
         exportJob.waitForCompletion(true);
 
         return 0;

@@ -21,10 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package edu.stefano.forti.pad.hashtomin;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -34,7 +32,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.util.*;
 
 /**
  *
@@ -42,45 +39,41 @@ import org.apache.hadoop.util.*;
  */
 public class HashToMin extends BaseJob {
 
-    public static void main(String[] args) throws Exception {
-        if (args.length == 3) {
-            int exitCode = ToolRunner.run(new Configuration(), new HashToMin(), args);
-            System.exit(exitCode);
-        } else {
-            System.out.print("Incorrect use: you should specify input file, output file and number of reduce tasks.");
-        }
+    private Path input, output;
+    private final int reduceTasksNumber;
+
+    public HashToMin(Path input, Path output, int reduceTasksNumber) {
+        this.input = input;
+        this.output = output;
+        this.reduceTasksNumber = reduceTasksNumber;
     }
 
     @Override
-    public int run(String[] strings) throws Exception {
-
+    public int run(String[] args) throws Exception {
+        
         Job hashToMinJob;
-        long iterate = 1;
-        int iterations = 0;
-        String input, output = null;
+        String[] strings = new String[1];
+        strings[0] = Integer.toString(reduceTasksNumber);
+        long iterate;
+        int result = -1;
 
-        while (iterate > 0) {
-            hashToMinJob = getHashToMinJobConf(strings);
+        hashToMinJob = getHashToMinJobConf(strings);
 
-            if (iterations == 0) {
-                input = strings[0];
-            } else {
-                input = strings[1] + iterations;
-            }
+        FileInputFormat.setInputPaths(hashToMinJob, input);
+        FileOutputFormat.setOutputPath(hashToMinJob, output);
 
-            output = strings[1] + (iterations + 1);
-            FileInputFormat.setInputPaths(hashToMinJob, new Path(input));
-            FileOutputFormat.setOutputPath(hashToMinJob, new Path(output));
+        hashToMinJob.waitForCompletion(true);
+        
+        Counters counters = hashToMinJob.getCounters();
+        iterate = counters.findCounter(JobCounters.GO_ON).getValue();
+        counters.findCounter(JobCounters.GO_ON).setValue(0);
+        
+        if (iterate > 0)
+            result = 1;
+        else
+            result = 0;
 
-            hashToMinJob.waitForCompletion(true);
-
-            Counters counters = hashToMinJob.getCounters();
-            iterate = counters.findCounter(JobCounters.GO_ON).getValue();
-            counters.findCounter(JobCounters.GO_ON).setValue(0);
-            iterations++;
-        }
-
-        return 0;
+        return result;
     }
 
     private Job getHashToMinJobConf(final String[] args) throws Exception {
@@ -128,7 +121,7 @@ public class HashToMin extends BaseJob {
 
             @Override
             public int getNumReduceTasks() {
-                return Integer.parseInt(args[2]);
+                return Integer.parseInt(args[0]);
             }
         };
 
@@ -136,6 +129,13 @@ public class HashToMin extends BaseJob {
 
     }
 
-    
+    public static void main(String[] args) throws Exception {
+        if (args.length == 3) {
+            //int exitCode = ToolRunner.run(new Configuration(), new HashToMin(input, output, reduceTasksNumber), args);
+//            System.exit(exitCode);
+        } else {
+            System.out.print("Incorrect use: you should specify input file, output file and number of reduce tasks.");
+        }
+    }
 
 }
