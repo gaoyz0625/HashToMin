@@ -3,6 +3,6 @@ A Hadoop MapReduce implementation of the HashToMin algorithm for finding connect
 
 The usage is fairly simple and it is listed below.
 ```java
-ConnectedComponents connected = new ConnectedComponents(args[0], args[1], Integer.parseInt(args[2]), true);
+ConnectedComponents connected = new ConnectedComponents("input", "output", reduceTasksNumberForHTM , true);
 connected.run(null);
 ```
