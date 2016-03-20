@@ -23,7 +23,7 @@
  */
 package edu.stefano.forti.pad.export;
 
-import utils.ClusterWritable;
+import edu.stefano.forti.pad.utils.ClusterWritable;
 import java.io.IOException;
 import java.util.TreeSet;
 import org.apache.hadoop.io.IntWritable;

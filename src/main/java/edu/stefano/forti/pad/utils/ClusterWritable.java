@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package utils;
+package edu.stefano.forti.pad.utils;
 
 import java.io.*;
 import java.util.TreeSet;

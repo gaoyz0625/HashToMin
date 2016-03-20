@@ -24,7 +24,7 @@
 
 package edu.stefano.forti.pad.verifier;
 
-import utils.JobCounters;
+import edu.stefano.forti.pad.utils.JobCounters;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
