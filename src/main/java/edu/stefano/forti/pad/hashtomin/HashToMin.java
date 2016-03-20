@@ -23,21 +23,21 @@
  */
 package edu.stefano.forti.pad.hashtomin;
 
+import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Counters;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.util.Tool;
 
 /**
  *
  * @author stefano
  */
-public class HashToMin extends BaseJob {
+public class HashToMin extends Configured implements Tool{
 
     private Path input, output;
     private final int reduceTasksNumber;
@@ -50,84 +50,39 @@ public class HashToMin extends BaseJob {
 
     @Override
     public int run(String[] args) throws Exception {
-        
-        Job hashToMinJob;
-        String[] strings = new String[1];
-        strings[0] = Integer.toString(reduceTasksNumber);
+
+        Job hashToMinJob = new Job();
+
+        hashToMinJob.setJarByClass(HashToMin.class);
+        hashToMinJob.setMapperClass(HashToMinMapper.class);
+        hashToMinJob.setReducerClass(HashToMinReducer.class);
+        hashToMinJob.setNumReduceTasks(reduceTasksNumber);
+        hashToMinJob.setMapOutputKeyClass(IntWritable.class);
+        hashToMinJob.setMapOutputValueClass(ClusterWritable.class);
+        hashToMinJob.setOutputKeyClass(IntWritable.class);
+        hashToMinJob.setOutputValueClass(Text.class);
+
         long iterate;
         int result = -1;
-
-        hashToMinJob = getHashToMinJobConf(strings);
 
         FileInputFormat.setInputPaths(hashToMinJob, input);
         FileOutputFormat.setOutputPath(hashToMinJob, output);
 
         hashToMinJob.waitForCompletion(true);
-        
+
         Counters counters = hashToMinJob.getCounters();
         iterate = counters.findCounter(JobCounters.GO_ON).getValue();
         counters.findCounter(JobCounters.GO_ON).setValue(0);
-        
-        if (iterate > 0)
+
+        if (iterate > 0) {
             result = 1;
-        else
+        } else {
             result = 0;
+        }
 
         return result;
     }
 
-    private Job getHashToMinJobConf(final String[] args) throws Exception {
-
-        JobInfo jobInfo = new JobInfo() {
-            @Override
-            public Class<? extends Reducer> getCombinerClass() {
-                return null;
-            }
-
-            @Override
-            public Class<?> getJarByClass() {
-                return HashToMin.class;
-            }
-
-            @Override
-            public Class<? extends Mapper> getMapperClass() {
-                return HashToMinMapper.class;
-            }
-
-            @Override
-            public Class<?> getOutputKeyClass() {
-                return IntWritable.class;
-            }
-
-            @Override
-            public Class<?> getOutputValueClass() {
-                return Text.class;
-            }
-
-            @Override
-            public Class<? extends Reducer> getReducerClass() {
-                return HashToMinReducer.class;
-            }
-
-            @Override
-            public Class<?> getMapOutputKeyClass() {
-                return IntWritable.class;
-            }
-
-            @Override
-            public Class<?> getMapOutputValueClass() {
-                return ClusterWritable.class;
-            }
-
-            @Override
-            public int getNumReduceTasks() {
-                return Integer.parseInt(args[0]);
-            }
-        };
-
-        return setupJob("hashtomin", jobInfo);
-
-    }
 
     public static void main(String[] args) throws Exception {
         if (args.length == 3) {

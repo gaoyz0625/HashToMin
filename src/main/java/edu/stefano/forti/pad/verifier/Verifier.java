@@ -24,19 +24,12 @@
 
 package edu.stefano.forti.pad.verifier;
 
-import edu.stefano.forti.pad.hashtomin.BaseJob;
-import edu.stefano.forti.pad.hashtomin.ClusterWritable;
-import edu.stefano.forti.pad.hashtomin.HashToMin;
 import edu.stefano.forti.pad.hashtomin.JobCounters;
-import edu.stefano.forti.pad.export.ExportReducer;
-import edu.stefano.forti.pad.export.ExportMapper;
-import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.*;
@@ -45,7 +38,7 @@ import org.apache.hadoop.util.*;
  *
  * @author stefano
  */
-public class Verifier extends BaseJob {
+public class Verifier extends Configured implements Tool{
     
     private Path input;
     
@@ -65,68 +58,23 @@ public class Verifier extends BaseJob {
     @Override
     public int run(String[] strings) throws Exception {
 
-        Job verifierJob;
+        Job verifierJob = new Job();
+        
+        verifierJob.setJarByClass(Verifier.class);
+        verifierJob.setMapperClass(VerifierMapper.class);
+        verifierJob.setReducerClass(VerifierReducer.class);
+        verifierJob.setNumReduceTasks(1);
+        verifierJob.setMapOutputKeyClass(IntWritable.class);
+        verifierJob.setMapOutputValueClass(IntWritable.class);
+        verifierJob.setOutputKeyClass(NullWritable.class);
+        verifierJob.setOutputValueClass(NullWritable.class);
 
-        verifierJob = getVerifierJobConf(strings);
         FileInputFormat.setInputPaths(verifierJob, input);
         FileOutputFormat.setOutputPath(verifierJob, new Path ("tmp"));
         verifierJob.waitForCompletion(true);
         System.out.println("***********ERRORS: "+verifierJob.getCounters().findCounter(JobCounters.DUPLICATES).getValue());
 
         return 0;
-    }
-
-    private Job getVerifierJobConf(String[] args) throws Exception {
-
-        BaseJob.JobInfo jobInfo = new BaseJob.JobInfo() {
-            @Override
-            public Class<? extends Reducer> getCombinerClass() {
-                return null;
-            }
-
-            @Override
-            public Class<?> getJarByClass() {
-                return HashToMin.class;
-            }
-
-            @Override
-            public Class<? extends Mapper> getMapperClass() {
-                return ExportMapper.class;
-            }
-
-            @Override
-            public Class<?> getOutputKeyClass() {
-                return IntWritable.class;
-            }
-
-            @Override
-            public Class<?> getOutputValueClass() {
-                return Text.class;
-            }
-
-            @Override
-            public Class<? extends Reducer> getReducerClass() {
-                return ExportReducer.class;
-            }
-
-            @Override
-            public Class<?> getMapOutputKeyClass() {
-                return IntWritable.class;
-            }
-
-            @Override
-            public Class<?> getMapOutputValueClass() {
-                return ClusterWritable.class;
-            }
-
-            @Override
-            public int getNumReduceTasks() {
-                return 1;
-            }
-        };
-
-        return setupJob("verifier", jobInfo);
-
     }
 
 }

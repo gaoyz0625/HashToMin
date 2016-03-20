@@ -24,23 +24,21 @@
 
 package edu.stefano.forti.pad.export;
 
-import edu.stefano.forti.pad.hashtomin.BaseJob;
 import edu.stefano.forti.pad.hashtomin.ClusterWritable;
-import edu.stefano.forti.pad.hashtomin.HashToMin;
+import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.util.Tool;
 
 /**
  *
  * @author stefano
  */
-public class Export extends BaseJob {
+public class Export extends Configured implements Tool {
     private Path input, output;
     
     public Export(Path input, Path output){
@@ -59,69 +57,24 @@ public class Export extends BaseJob {
 
     @Override
     public int run(String[] strings) throws Exception {
-
         
-        Job exportJob;
+        Job exportJob = new Job();
+        
+                
+        exportJob.setJarByClass(Export.class);
+        exportJob.setMapperClass(ExportMapper.class);
+        exportJob.setReducerClass(ExportReducer.class);
+        exportJob.setNumReduceTasks(1);
+        exportJob.setMapOutputKeyClass(IntWritable.class);
+        exportJob.setMapOutputValueClass(ClusterWritable.class);
+        exportJob.setOutputKeyClass(IntWritable.class);
+        exportJob.setOutputValueClass(Text.class);
 
-        exportJob = getExportJobConf(strings);
         FileInputFormat.setInputPaths(exportJob, input);
         FileOutputFormat.setOutputPath(exportJob, output);
         exportJob.waitForCompletion(true);
 
         return 0;
-    }
-
-    private Job getExportJobConf(String[] args) throws Exception {
-
-        BaseJob.JobInfo jobInfo = new BaseJob.JobInfo() {
-            @Override
-            public Class<? extends Reducer> getCombinerClass() {
-                return null;
-            }
-
-            @Override
-            public Class<?> getJarByClass() {
-                return HashToMin.class;
-            }
-
-            @Override
-            public Class<? extends Mapper> getMapperClass() {
-                return ExportMapper.class;
-            }
-
-            @Override
-            public Class<?> getOutputKeyClass() {
-                return IntWritable.class;
-            }
-
-            @Override
-            public Class<?> getOutputValueClass() {
-                return Text.class;
-            }
-
-            @Override
-            public Class<? extends Reducer> getReducerClass() {
-                return ExportReducer.class;
-            }
-
-            @Override
-            public Class<?> getMapOutputKeyClass() {
-                return IntWritable.class;
-            }
-
-            @Override
-            public Class<?> getMapOutputValueClass() {
-                return ClusterWritable.class;
-            }
-
-            @Override
-            public int getNumReduceTasks() {
-                return 1;
-            }
-        };
-
-        return setupJob("export", jobInfo);
-
     }
 
 }
