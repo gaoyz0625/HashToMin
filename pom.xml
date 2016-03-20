@@ -30,7 +30,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>edu.stefano.forti.pad.hashtomin.ConnectedComponents</mainClass>
+                            <mainClass>edu.stefano.forti.pad.connectedcomponents.ConnectedComponents</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

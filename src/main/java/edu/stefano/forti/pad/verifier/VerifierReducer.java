@@ -21,30 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package edu.stefano.forti.pad.hashtomin;
+package edu.stefano.forti.pad.verifier;
 
+import edu.stefano.forti.pad.hashtomin.JobCounters;
 import java.io.IOException;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
 
 /**
  *
  * @author stefano
  */
-public class VerifierMapper extends Mapper<LongWritable,Text,IntWritable,IntWritable> {
+public class VerifierReducer extends Reducer<IntWritable, IntWritable, NullWritable, NullWritable> {
 
     @Override
-    public void map(LongWritable key, Text clust, Context context)
-        throws IOException, InterruptedException{
-        
-        String[] verteces = clust.toString().split("[\\s\\t]+");
-        
-        for (int j = 1; j < verteces.length; j++){
-            String t = verteces[j];
-            context.write(new IntWritable(Integer.parseInt(t)), new IntWritable(1));
+    public void reduce(IntWritable vertex, Iterable<IntWritable> occurrences, Context context)
+            throws IOException, InterruptedException {
+        int copies = 0;
+        for (IntWritable occ : occurrences) {
+            copies++;
+            if(copies > 1){
+                context.getCounter(JobCounters.DUPLICATES).increment(1);
+            }
         }
-       
-    } 
+        
+    }
+
 }

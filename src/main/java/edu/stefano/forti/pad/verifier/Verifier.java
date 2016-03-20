@@ -22,8 +22,15 @@
  * THE SOFTWARE.
  */
 
-package edu.stefano.forti.pad.hashtomin;
+package edu.stefano.forti.pad.verifier;
 
+import edu.stefano.forti.pad.hashtomin.BaseJob;
+import edu.stefano.forti.pad.hashtomin.ClusterWritable;
+import edu.stefano.forti.pad.hashtomin.HashToMin;
+import edu.stefano.forti.pad.hashtomin.JobCounters;
+import edu.stefano.forti.pad.export.ExportReducer;
+import edu.stefano.forti.pad.export.ExportMapper;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -32,22 +39,23 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.util.*;
 
 /**
  *
  * @author stefano
  */
-public class Export extends BaseJob {
-    private Path input, output;
+public class Verifier extends BaseJob {
     
-    public Export(Path input, Path output){
+    private Path input;
+    
+    public Verifier (Path input){
         this.input = input;
-        this.output = output;
     }
-    
+
     public static void main(String[] args) throws Exception {
         if (args.length == 3) {
-//            int exitCode = ToolRunner.run(new Configuration(), new Export(), args);
+//            int exitCode = ToolRunner.run(new Configuration(), new Verifier(), args);
 //            System.exit(exitCode);
         } else {
             System.out.print("Incorrect use: you should specify input file, output file and number of reduce tasks.");
@@ -57,18 +65,18 @@ public class Export extends BaseJob {
     @Override
     public int run(String[] strings) throws Exception {
 
-        
-        Job exportJob;
+        Job verifierJob;
 
-        exportJob = getExportJobConf(strings);
-        FileInputFormat.setInputPaths(exportJob, input);
-        FileOutputFormat.setOutputPath(exportJob, output);
-        exportJob.waitForCompletion(true);
+        verifierJob = getVerifierJobConf(strings);
+        FileInputFormat.setInputPaths(verifierJob, input);
+        FileOutputFormat.setOutputPath(verifierJob, new Path ("tmp"));
+        verifierJob.waitForCompletion(true);
+        System.out.println("***********ERRORS: "+verifierJob.getCounters().findCounter(JobCounters.DUPLICATES).getValue());
 
         return 0;
     }
 
-    private Job getExportJobConf(String[] args) throws Exception {
+    private Job getVerifierJobConf(String[] args) throws Exception {
 
         BaseJob.JobInfo jobInfo = new BaseJob.JobInfo() {
             @Override
@@ -117,7 +125,7 @@ public class Export extends BaseJob {
             }
         };
 
-        return setupJob("export", jobInfo);
+        return setupJob("verifier", jobInfo);
 
     }
 

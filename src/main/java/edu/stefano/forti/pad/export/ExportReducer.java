@@ -21,36 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package edu.stefano.forti.pad.hashtomin;
+package edu.stefano.forti.pad.export;
 
+import edu.stefano.forti.pad.hashtomin.ClusterWritable;
 import java.io.IOException;
-import java.util.TreeSet;
+
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
 
 /**
  *
  * @author stefano
  */
-public class ExportMapper extends Mapper<LongWritable,Text,IntWritable,ClusterWritable> {
+public class ExportReducer extends Reducer<IntWritable, ClusterWritable, IntWritable, Text> {
 
     @Override
-    public void map(LongWritable key, Text clust, Context context)
-        throws IOException, InterruptedException{
-        
-        String[] verteces = clust.toString().split("[\\s\\t]+");
-        
-        TreeSet<Integer> tree = new TreeSet<Integer>();
-        
-        for (String t : verteces){
-            tree.add(Integer.parseInt(t));
+    public void reduce(IntWritable vertex, Iterable<ClusterWritable> clusters, Context context)
+            throws IOException, InterruptedException {
+
+        for (ClusterWritable c : clusters) {
+            context.write(vertex, new Text(c.toString()));
         }
         
-        if ((Integer.parseInt(verteces[0])) == (Integer.parseInt(verteces[1]))){
-            context.write(new IntWritable((Integer.parseInt(verteces[0]))), new ClusterWritable(tree) );
-        }
-       
-    } 
+    }
+
 }

@@ -21,28 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package edu.stefano.forti.pad.hashtomin;
+package edu.stefano.forti.pad.verifier;
 
 import java.io.IOException;
-
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.Mapper;
 
 /**
  *
  * @author stefano
  */
-public class ExportReducer extends Reducer<IntWritable, ClusterWritable, IntWritable, Text> {
+public class VerifierMapper extends Mapper<LongWritable,Text,IntWritable,IntWritable> {
 
     @Override
-    public void reduce(IntWritable vertex, Iterable<ClusterWritable> clusters, Context context)
-            throws IOException, InterruptedException {
-
-        for (ClusterWritable c : clusters) {
-            context.write(vertex, new Text(c.toString()));
-        }
+    public void map(LongWritable key, Text clust, Context context)
+        throws IOException, InterruptedException{
         
-    }
-
+        String[] verteces = clust.toString().split("[\\s\\t]+");
+        
+        for (int j = 1; j < verteces.length; j++){
+            String t = verteces[j];
+            context.write(new IntWritable(Integer.parseInt(t)), new IntWritable(1));
+        }
+       
+    } 
 }

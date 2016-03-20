@@ -21,8 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package edu.stefano.forti.pad.hashtomin;
+package edu.stefano.forti.pad.connectedcomponents;
 
+import edu.stefano.forti.pad.hashtomin.HashToMin;
+import edu.stefano.forti.pad.verifier.Verifier;
+import edu.stefano.forti.pad.export.Export;
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;

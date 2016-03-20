@@ -27,7 +27,7 @@ package edu.stefano.forti.pad.hashtomin;
  *
  * @author stefano
  */
-    enum JobCounters {
+    public enum JobCounters {
         GO_ON,
         DUPLICATES
     }
