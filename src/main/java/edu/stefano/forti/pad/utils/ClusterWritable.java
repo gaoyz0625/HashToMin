@@ -45,9 +45,9 @@ public class ClusterWritable extends TreeSet<Integer> implements Writable {
 
     @Override
     public void write(DataOutput d) throws IOException {
-        int size = super.size();
+        int size = this.size();
         d.writeInt(size);
-        for (Integer i : super.descendingSet()) {
+        for (Integer i : this.descendingSet()) {
             d.writeInt(i);
         }
     }
@@ -55,9 +55,10 @@ public class ClusterWritable extends TreeSet<Integer> implements Writable {
     @Override
     public void readFields(DataInput di) throws IOException {
         int size = di.readInt();
+        this.clear();
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                super.add(di.readInt());
+                this.add(di.readInt());
             }
         }
     }
