@@ -85,14 +85,4 @@ public class HashToMin extends Configured implements Tool{
         return result;
     }
 
-
-    public static void main(String[] args) throws Exception {
-        if (args.length == 3) {
-            //int exitCode = ToolRunner.run(new Configuration(), new HashToMin(input, output, reduceTasksNumber), args);
-//            System.exit(exitCode);
-        } else {
-            System.out.print("Incorrect use: you should specify input file, output file and number of reduce tasks.");
-        }
-    }
-
 }

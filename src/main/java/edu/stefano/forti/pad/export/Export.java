@@ -45,15 +45,6 @@ public class Export extends Configured implements Tool {
         this.input = input;
         this.output = output;
     }
-    
-    public static void main(String[] args) throws Exception {
-        if (args.length == 3) {
-//            int exitCode = ToolRunner.run(new Configuration(), new Export(), args);
-//            System.exit(exitCode);
-        } else {
-            System.out.print("Incorrect use: you should specify input file, output file and number of reduce tasks.");
-        }
-    }
 
     @Override
     public int run(String[] strings) throws Exception {

@@ -99,7 +99,7 @@ public class ConnectedComponents {
     }
     
     public static void main(String[] args) throws Exception {
-        ConnectedComponents connected = new ConnectedComponents(args[0], args[1], Integer.parseInt(args[2]), true);
+        ConnectedComponents connected = new ConnectedComponents(args[0], args[1], Integer.parseInt(args[2]), false);
         connected.run(null);
     }
     
