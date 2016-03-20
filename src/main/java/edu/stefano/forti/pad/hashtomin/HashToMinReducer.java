@@ -23,6 +23,8 @@
  */
 package edu.stefano.forti.pad.hashtomin;
 
+import utils.JobCounters;
+import utils.ClusterWritable;
 import java.io.IOException;
 import java.util.TreeSet;
 

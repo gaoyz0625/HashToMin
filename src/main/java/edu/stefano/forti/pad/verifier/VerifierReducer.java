@@ -23,7 +23,7 @@
  */
 package edu.stefano.forti.pad.verifier;
 
-import edu.stefano.forti.pad.hashtomin.JobCounters;
+import utils.JobCounters;
 import java.io.IOException;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;

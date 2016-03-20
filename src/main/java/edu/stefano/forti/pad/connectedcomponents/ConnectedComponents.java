@@ -89,6 +89,11 @@ public class ConnectedComponents {
             verifier.run(null);
             fileSystem.delete(new Path("tmp"), true);
         }
+        
+        if (iterations > 1)
+            System.out.println("Connected Components in " + iterations + " rounds.");
+        else
+            System.out.println("Connected Components in " + iterations + " round.");
      
         return true;
     }

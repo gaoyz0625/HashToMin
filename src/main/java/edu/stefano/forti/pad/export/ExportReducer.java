@@ -23,7 +23,7 @@
  */
 package edu.stefano.forti.pad.export;
 
-import edu.stefano.forti.pad.hashtomin.ClusterWritable;
+import utils.ClusterWritable;
 import java.io.IOException;
 
 import org.apache.hadoop.io.IntWritable;
