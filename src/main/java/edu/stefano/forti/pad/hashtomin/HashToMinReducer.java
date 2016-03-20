@@ -46,7 +46,7 @@ public class HashToMinReducer extends Reducer<IntWritable, ClusterWritable, IntW
         int v = vertex.get();
         //updates C_v in (v,C_v)
         for (ClusterWritable c : clusters) {   
-            cluster.addAll(c.get());
+            cluster.addAll(c);
         }
         //checks whether there has been convergence to <u, {v_min}> and <v_min, C> couples
         if (cluster.size() > 1 && v > cluster.first()) {
