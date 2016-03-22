@@ -67,7 +67,7 @@ private Path input, output;
         hashToMinJob.setNumReduceTasks(reduceTasksNumber);
         hashToMinJob.setMapOutputKeyClass(VertexPair.class);
         hashToMinJob.setMapOutputValueClass(IntWritable.class);
-        hashToMinJob.setOutputKeyClass(VertexPair.class);
+        hashToMinJob.setOutputKeyClass(IntWritable.class);
         hashToMinJob.setOutputValueClass(Text.class);
 
         long iterate;

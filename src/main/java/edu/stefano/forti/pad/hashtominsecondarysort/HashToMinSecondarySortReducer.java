@@ -36,30 +36,36 @@ import org.apache.hadoop.mapreduce.Reducer;
  *
  * @author stefano
  */
-class HashToMinSecondarySortReducer extends Reducer<VertexPair, IntWritable, VertexPair, Text> {
+class HashToMinSecondarySortReducer extends Reducer<VertexPair, IntWritable, IntWritable, Text> {
 
     @Override
     public void reduce(VertexPair vertex, Iterable<IntWritable> cluster, Context context)
             throws IOException, InterruptedException {
         
-        int currNode, tmpNode = -1, length = 0;
+        int currNode, prevNode, length = 1, vMin = -1;
         String result = new String();
         
         Iterator<IntWritable> iterator = cluster.iterator();
         
+        prevNode = iterator.next().get();
+        vMin = prevNode;
+        
         while(iterator.hasNext()){
             currNode = iterator.next().get();
-            while (iterator.hasNext() && (tmpNode = iterator.next().get())== currNode){    
+            if (prevNode != currNode){
+                result += prevNode + " ";
+                prevNode = currNode;
                 length++;
             }
-            result += currNode + " ";
-            currNode = tmpNode;
-            length++;
         }
         
-        //if (vertex.getFirst() > vertex.getSecond() && length > 1 )
+        result += prevNode;
+        
+        //cluster.size() > 1 && v > cluster.first()
+        
+        if (vertex.getFirst() > vMin && length > 1 )
             context.getCounter(JobCounters.GO_ON).increment(1);
-         context.write(vertex,new Text(result));
+        context.write(new IntWritable(vertex.getFirst()),new Text(result));
     }
 
 }
