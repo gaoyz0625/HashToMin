@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 stefano.
+ * Copyright 2016 Stefano Forti
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,7 @@ class HashToMinSecondarySortReducer extends Reducer<VertexPair, IntWritable, Int
     public void reduce(VertexPair vertex, Iterable<IntWritable> cluster, Context context)
             throws IOException, InterruptedException {
         
-        int currNode, prevNode, length = 1, vMin = -1;
+        int currNode = -1, prevNode, length = 1, vMin = -1;
         String result = new String();
         
         Iterator<IntWritable> iterator = cluster.iterator();
@@ -61,10 +61,9 @@ class HashToMinSecondarySortReducer extends Reducer<VertexPair, IntWritable, Int
         
         result += prevNode;
         
-        //cluster.size() > 1 && v > cluster.first()
-        
         if (vertex.getFirst() > vMin && length > 1 )
             context.getCounter(JobCounters.GO_ON).increment(1);
+        
         context.write(new IntWritable(vertex.getFirst()),new Text(result));
     }
 

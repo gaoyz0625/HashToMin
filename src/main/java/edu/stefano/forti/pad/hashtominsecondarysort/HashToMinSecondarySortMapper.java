@@ -45,29 +45,26 @@ class HashToMinSecondarySortMapper extends Mapper<LongWritable,Text,VertexPair,I
         String[] verteces = couple.toString().split("[\\s\\t]+");
         int vMin = Integer.parseInt(verteces[0]);
         int u;
-        
-        //builds (v_min, C_v)
-        
+          
         if (verteces.length == 1){
             context.write(new VertexPair(vMin, vMin), new IntWritable(vMin));
         }
-        
+        else{
+        //finds v_min
         for (int i = 1; i < verteces.length; i++){
             u = Integer.parseInt(verteces[i]);
             if (u < vMin){
                 vMin = u;
             }
-            
-            context.write(new VertexPair(vMin, u), new IntWritable(u));
         }     
 
-        //builds (u, v_min)
-        
-        for (int i = 1; i < verteces.length; i++){
-            u = Integer.parseInt(verteces[i]);
-            context.write(new VertexPair(u, vMin), new IntWritable(vMin));
+            //builds (u, v_min) and (v_min, C_v)
+            for (String vertex : verteces) {
+                u = Integer.parseInt(vertex);
+                context.write(new VertexPair(vMin, u), new IntWritable(u));
+                context.write(new VertexPair(u, vMin), new IntWritable(vMin));
+            }
         }
-
        
     } 
 }
