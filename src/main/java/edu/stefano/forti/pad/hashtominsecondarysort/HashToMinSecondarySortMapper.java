@@ -54,7 +54,7 @@ class HashToMinSecondarySortMapper extends Mapper<LongWritable,Text,VertexPair,I
         
         for (int i = 1; i < verteces.length; i++){
             u = Integer.parseInt(verteces[i]);
-            if (verteces.length > 2 && u < vMin){
+            if (u < vMin){
                 vMin = u;
             }
             
