@@ -83,7 +83,7 @@ public class ConnectedComponents {
         
         Export export = new Export(outputTmp, output);
         export.run(null);
-        //this.fileSystem.delete(outputTmp, true);
+        this.fileSystem.delete(outputTmp, true);
         
         if (verifyResult){
             Verifier verifier = new Verifier(output);
