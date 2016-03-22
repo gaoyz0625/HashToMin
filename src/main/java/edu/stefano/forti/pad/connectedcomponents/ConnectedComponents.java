@@ -42,6 +42,8 @@ public class ConnectedComponents {
     private final int reduceTasksNumber;
     private final boolean verifyResult;
     private final FileSystem fileSystem;
+    private final static int MAX_ITERATIONS = 20; 
+   
 
     public ConnectedComponents(String input, String output, int reduceTasksNumber, boolean verifyResult) throws IOException{
         this.input = new Path(input);
@@ -61,7 +63,7 @@ public class ConnectedComponents {
         int iterations = 0;
         Path inputTmp, outputTmp = null;
         
-        while (iterate > 0) {
+        while (iterate > 0 && iterations < MAX_ITERATIONS) {
 
             if (iterations == 0) {
                 inputTmp = this.input;
