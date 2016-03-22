@@ -23,12 +23,43 @@
  */
 package edu.stefano.forti.pad.hashtominsecondarysort;
 
+import edu.stefano.forti.pad.utils.ClusterWritable;
+import edu.stefano.forti.pad.utils.JobCounters;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.TreeSet;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 /**
  *
  * @author stefano
  */
-class HashToMinSecondarySortReducer extends Reducer {
-    
+class HashToMinSecondarySortReducer extends Reducer<VertexPair, IntWritable, VertexPair, Text> {
+
+    @Override
+    public void reduce(VertexPair vertex, Iterable<IntWritable> cluster, Context context)
+            throws IOException, InterruptedException {
+        
+        int currNode, tmpNode = -1, length = 0;
+        String result = new String();
+        
+        Iterator<IntWritable> iterator = cluster.iterator();
+        
+        while(iterator.hasNext()){
+            currNode = iterator.next().get();
+            while (iterator.hasNext() && (tmpNode = iterator.next().get())== currNode){    
+                length++;
+            }
+            result += currNode + " ";
+            currNode = tmpNode;
+            length++;
+        }
+        
+        //if (vertex.getFirst() > vertex.getSecond() && length > 1 )
+            context.getCounter(JobCounters.GO_ON).increment(1);
+         context.write(vertex,new Text(result));
+    }
+
 }

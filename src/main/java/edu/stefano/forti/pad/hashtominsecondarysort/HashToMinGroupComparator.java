@@ -33,15 +33,15 @@ import org.apache.hadoop.io.WritableComparator;
  */
 public class HashToMinGroupComparator extends WritableComparator  {
     protected HashToMinGroupComparator(){
-        super(IntPair.class, true);
+        super(VertexPair.class, true);
     }
     
     @Override
     public int compare (WritableComparable w1, WritableComparable w2){
-        IntPair ip1 = (IntPair) w1;
-        IntPair ip2 = (IntPair) w2; 
+        VertexPair ip1 = (VertexPair) w1;
+        VertexPair ip2 = (VertexPair) w2; 
         
-        return IntPair.compare(ip1.getFirst(), ip2.getFirst());
+        return VertexPair.compare(ip1.getFirst(), ip2.getFirst());
     }
     
 }

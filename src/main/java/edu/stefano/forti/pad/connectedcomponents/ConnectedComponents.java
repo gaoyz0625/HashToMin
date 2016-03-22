@@ -26,6 +26,7 @@ package edu.stefano.forti.pad.connectedcomponents;
 import edu.stefano.forti.pad.hashtomin.HashToMin;
 import edu.stefano.forti.pad.verifier.Verifier;
 import edu.stefano.forti.pad.export.Export;
+import edu.stefano.forti.pad.hashtominsecondarysort.HashToMinSecondarySort;
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -70,7 +71,7 @@ public class ConnectedComponents {
 
             outputTmp = output.suffix(Integer.toString(iterations + 1));
             
-            HashToMin hashToMin = new HashToMin(inputTmp, outputTmp, this.reduceTasksNumber);
+            HashToMinSecondarySort hashToMin = new HashToMinSecondarySort(inputTmp, outputTmp, this.reduceTasksNumber);
             iterate = hashToMin.run(null);
 
             if (iterations != 0) {

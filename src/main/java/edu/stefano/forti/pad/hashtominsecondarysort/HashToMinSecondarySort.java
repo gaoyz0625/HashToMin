@@ -23,10 +23,71 @@
  */
 package edu.stefano.forti.pad.hashtominsecondarysort;
 
+import edu.stefano.forti.pad.hashtomin.HashToMin;
+import edu.stefano.forti.pad.hashtomin.HashToMinMapper;
+import edu.stefano.forti.pad.hashtomin.HashToMinReducer;
+import edu.stefano.forti.pad.utils.ClusterWritable;
+import edu.stefano.forti.pad.utils.JobCounters;
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Counters;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.util.Tool;
+
 /**
  *
  * @author stefano
  */
-public class HashToMinSecondarySort {
-    
+public class HashToMinSecondarySort extends Configured implements Tool {
+private Path input, output;
+    private final int reduceTasksNumber;
+
+    public HashToMinSecondarySort(Path input, Path output, int reduceTasksNumber) {
+        this.input = input;
+        this.output = output;
+        this.reduceTasksNumber = reduceTasksNumber;
+    }
+
+    @Override
+    public int run(String[] args) throws Exception {
+
+        Job hashToMinJob = new Job();
+
+        hashToMinJob.setJarByClass(HashToMinSecondarySort.class);
+        hashToMinJob.setPartitionerClass(HashToMinPartitioner.class);
+        hashToMinJob.setSortComparatorClass(HashToMinKeyComparator.class);
+        hashToMinJob.setGroupingComparatorClass(HashToMinGroupComparator.class);
+        
+        hashToMinJob.setMapperClass(HashToMinSecondarySortMapper.class);
+        hashToMinJob.setReducerClass(HashToMinSecondarySortReducer.class);
+        hashToMinJob.setNumReduceTasks(reduceTasksNumber);
+        hashToMinJob.setMapOutputKeyClass(VertexPair.class);
+        hashToMinJob.setMapOutputValueClass(IntWritable.class);
+        hashToMinJob.setOutputKeyClass(VertexPair.class);
+        hashToMinJob.setOutputValueClass(Text.class);
+
+        long iterate;
+        int result = -1;
+
+        FileInputFormat.setInputPaths(hashToMinJob, input);
+        FileOutputFormat.setOutputPath(hashToMinJob, output);
+
+        hashToMinJob.waitForCompletion(true);
+
+        Counters counters = hashToMinJob.getCounters();
+        iterate = counters.findCounter(JobCounters.GO_ON).getValue();
+        counters.findCounter(JobCounters.GO_ON).setValue(0);
+
+        if (iterate > 0) {
+            result = 1;
+        } else {
+            result = 0;
+        }
+
+        return result;
+    }
 }

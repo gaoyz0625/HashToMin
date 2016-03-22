@@ -23,12 +23,46 @@
  */
 package edu.stefano.forti.pad.hashtominsecondarysort;
 
+import edu.stefano.forti.pad.utils.ClusterWritable;
+import edu.stefano.forti.pad.utils.JobCounters;
+import java.io.IOException;
+import java.util.TreeSet;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 /**
  *
  * @author stefano
  */
-class HashToMinSecondarySortMapper extends Mapper {
-    
+class HashToMinSecondarySortMapper extends Mapper<LongWritable,Text,VertexPair,IntWritable> {
+
+    @Override
+    public void map(LongWritable key, Text couple, Mapper.Context context)
+        throws IOException, InterruptedException{
+        
+        String[] verteces = couple.toString().split("[\\s\\t]+");
+        int vMin = Integer.parseInt(verteces[0]);
+        int u;
+        
+        //builds (v_min, C_v)
+        for (int i = 1; i < verteces.length; i++){
+            u = Integer.parseInt(verteces[i]);
+            if (verteces.length > 2 && u < vMin){
+                vMin = u;
+            }
+            
+            context.write(new VertexPair(vMin, u), new IntWritable(u));
+        }     
+
+        //builds (u, v_min)
+        
+        for (int i = 1; i < verteces.length; i++){
+            u = Integer.parseInt(verteces[i]);
+            context.write(new VertexPair(u, vMin), new IntWritable(vMin));
+        }
+
+       
+    } 
 }

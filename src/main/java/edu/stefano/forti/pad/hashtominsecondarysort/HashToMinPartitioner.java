@@ -23,6 +23,7 @@
  */
 package edu.stefano.forti.pad.hashtominsecondarysort;
 
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Partitioner;
 
@@ -30,10 +31,10 @@ import org.apache.hadoop.mapreduce.Partitioner;
  *
  * @author stefano
  */
-public class HashToMinPartitioner extends Partitioner<IntPair, NullWritable>{
+public class HashToMinPartitioner extends Partitioner<VertexPair, IntWritable>{
 
     @Override
-    public int getPartition(IntPair key, NullWritable value, int i) {
+    public int getPartition(VertexPair key, IntWritable value, int i) {
         return Math.abs(key.getFirst()*127)% i;
     }
     
