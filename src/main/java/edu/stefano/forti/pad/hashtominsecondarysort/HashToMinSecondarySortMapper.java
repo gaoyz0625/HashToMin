@@ -36,27 +36,26 @@ import org.apache.hadoop.mapreduce.Mapper;
  *
  * @author stefano
  */
-class HashToMinSecondarySortMapper extends Mapper<LongWritable,Text,VertexPair,IntWritable> {
+public class HashToMinSecondarySortMapper extends Mapper<LongWritable, Text, VertexPair, IntWritable> {
 
     @Override
     public void map(LongWritable key, Text couple, Mapper.Context context)
-        throws IOException, InterruptedException{
-        
+            throws IOException, InterruptedException {
+
         String[] verteces = couple.toString().split("[\\s\\t]+");
         int vMin = Integer.parseInt(verteces[0]);
         int u;
-          
-        if (verteces.length == 1){
+
+        if (verteces.length == 1) {
             context.write(new VertexPair(vMin, vMin), new IntWritable(vMin));
-        }
-        else{
-        //finds v_min
-        for (int i = 1; i < verteces.length; i++){
-            u = Integer.parseInt(verteces[i]);
-            if (u < vMin){
-                vMin = u;
+        } else {
+            //finds v_min
+            for (int i = 1; i < verteces.length; i++) {
+                u = Integer.parseInt(verteces[i]);
+                if (u < vMin) {
+                    vMin = u;
+                }
             }
-        }     
 
             //builds (u, v_min) and (v_min, C_v)
             for (String vertex : verteces) {
@@ -65,6 +64,6 @@ class HashToMinSecondarySortMapper extends Mapper<LongWritable,Text,VertexPair,I
                 context.write(new VertexPair(u, vMin), new IntWritable(vMin));
             }
         }
-       
-    } 
+
+    }
 }

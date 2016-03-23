@@ -36,7 +36,7 @@ import org.apache.hadoop.mapreduce.Reducer;
  *
  * @author stefano
  */
-class HashToMinSecondarySortReducer extends Reducer<VertexPair, IntWritable, IntWritable, Text> {
+public class HashToMinSecondarySortReducer extends Reducer<VertexPair, IntWritable, IntWritable, Text> {
 
     @Override
     public void reduce(VertexPair vertex, Iterable<IntWritable> cluster, Context context)

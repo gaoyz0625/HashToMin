@@ -23,10 +23,6 @@
  */
 package edu.stefano.forti.pad.hashtominsecondarysort;
 
-import edu.stefano.forti.pad.hashtomin.HashToMin;
-import edu.stefano.forti.pad.hashtomin.HashToMinMapper;
-import edu.stefano.forti.pad.hashtomin.HashToMinReducer;
-import edu.stefano.forti.pad.utils.ClusterWritable;
 import edu.stefano.forti.pad.utils.JobCounters;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
