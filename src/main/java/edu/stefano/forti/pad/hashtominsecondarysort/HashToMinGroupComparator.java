@@ -32,7 +32,7 @@ import org.apache.hadoop.io.WritableComparator;
  * @author stefano
  */
 public class HashToMinGroupComparator extends WritableComparator  {
-    protected HashToMinGroupComparator(){
+    public HashToMinGroupComparator(){
         super(VertexPair.class, true);
     }
     

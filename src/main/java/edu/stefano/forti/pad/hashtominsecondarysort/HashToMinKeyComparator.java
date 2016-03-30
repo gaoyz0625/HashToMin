@@ -31,7 +31,7 @@ import org.apache.hadoop.io.WritableComparator;
  * @author stefano
  */
 public class HashToMinKeyComparator extends WritableComparator {
-    protected HashToMinKeyComparator() {
+    public HashToMinKeyComparator() {
         super(VertexPair.class, true);
     }
     

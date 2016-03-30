@@ -76,16 +76,16 @@ public class ConnectedComponents {
             HashToMinSecondarySort hashToMin = new HashToMinSecondarySort(inputTmp, outputTmp, this.reduceTasksNumber);
             iterate = hashToMin.run(null);
 
-//            if (iterations != 0) {
-//                this.fileSystem.delete(inputTmp, true);
-//            }
+            if (iterations != 0) {
+                this.fileSystem.delete(inputTmp, true);
+            }
 
             iterations++;
         }
         
         Export export = new Export(outputTmp, output);
         export.run(null);
-//        this.fileSystem.delete(outputTmp, true);
+        this.fileSystem.delete(outputTmp, true);
         
         if (verifyResult){
             Verifier verifier = new Verifier(output);

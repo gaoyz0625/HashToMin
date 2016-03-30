@@ -55,6 +55,9 @@ public class MapReducerTester {
     mapDriver = MapDriver.newMapDriver(mapper);
     reduceDriver = ReduceDriver.newReduceDriver(reducer);
     mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
+          
+    mapReduceDriver.setKeyOrderComparator(new HashToMinKeyComparator());
+    mapReduceDriver.setKeyGroupingComparator(new HashToMinGroupComparator());
   }
  
   @Test
@@ -89,6 +92,7 @@ public class MapReducerTester {
    @Test
 
   public void testMapReduce() throws IOException {
+
       
     List<Pair<LongWritable,Text>> inputs = new ArrayList<Pair<LongWritable,Text>>();
     inputs.add(new Pair(new LongWritable(), new Text("1\t2 3 4 5")));
@@ -100,7 +104,6 @@ public class MapReducerTester {
     
     
     List<Pair<IntWritable,Text>> values = new ArrayList<Pair<IntWritable,Text>>();
-    
     values.add(new Pair(new IntWritable(1), new Text("1 2 3 4 5")));
     values.add(new Pair(new IntWritable(2), new Text("1")));
     values.add(new Pair(new IntWritable(3), new Text("1")));
