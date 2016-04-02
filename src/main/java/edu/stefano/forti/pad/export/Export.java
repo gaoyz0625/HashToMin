@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Stefano Forti
+ * Copyright 2016 Stefano Forti.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,8 +50,7 @@ public class Export extends Configured implements Tool {
     public int run(String[] strings) throws Exception {
         
         Job exportJob = new Job();
-        
-                
+
         exportJob.setJarByClass(Export.class);
         exportJob.setMapperClass(ExportMapper.class);
         exportJob.setReducerClass(ExportReducer.class);
@@ -63,7 +62,7 @@ public class Export extends Configured implements Tool {
 
         FileInputFormat.setInputPaths(exportJob, input);
         FileOutputFormat.setOutputPath(exportJob, output);
-        exportJob.waitForCompletion(true);
+        exportJob.waitForCompletion(false);
 
         return 0;
     }

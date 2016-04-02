@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Stefano Forti
+ * Copyright 2016 Stefano Forti.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -62,7 +62,7 @@ public class Verifier extends Configured implements Tool{
 
         FileInputFormat.setInputPaths(verifierJob, input);
         FileOutputFormat.setOutputPath(verifierJob, new Path ("tmp"));
-        verifierJob.waitForCompletion(true);
+        verifierJob.waitForCompletion(false);
         System.out.println("Verifier Procedure. Errors: "+verifierJob.getCounters().findCounter(JobCounters.DUPLICATES).getValue());
 
         return 0;

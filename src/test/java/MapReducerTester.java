@@ -21,8 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-
 import edu.stefano.forti.pad.hashtominsecondarysort.*;
 import edu.stefano.forti.pad.hashtominsecondarysort.VertexPair;
 import java.io.IOException;
