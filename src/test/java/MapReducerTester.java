@@ -28,7 +28,6 @@ import edu.stefano.forti.pad.hashtominsecondarysort.VertexPair;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -66,8 +65,6 @@ public class MapReducerTester {
 //    mapDriver.addInput(new LongWritable(2), new Text("5\t3 4 5"));
     
     mapDriver.withInput(new LongWritable(1), new Text("1\t1 2 4"))
-            .withOutput(new VertexPair(1,1), new IntWritable(1))
-            .withOutput(new VertexPair(1,1), new IntWritable(1))
             .withOutput(new VertexPair(1,1), new IntWritable(1))
             .withOutput(new VertexPair(1,1), new IntWritable(1))
             .withOutput(new VertexPair(1,2), new IntWritable(2))
@@ -116,6 +113,5 @@ public class MapReducerTester {
     mapReduceDriver.runTest();
 
   }
-   
-    
+     
 }

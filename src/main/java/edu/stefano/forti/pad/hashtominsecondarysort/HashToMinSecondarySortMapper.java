@@ -41,29 +41,33 @@ public class HashToMinSecondarySortMapper extends Mapper<LongWritable, Text, Ver
     @Override
     public void map(LongWritable key, Text couple, Mapper.Context context)
             throws IOException, InterruptedException {
+        if (couple.toString().matches("[0-9\\s\\t]+")) {
+            String[] verteces = couple.toString().split("[\\s\\t]+");
+            int vMin = Integer.parseInt(verteces[0]);
+            int u;
 
-        String[] verteces = couple.toString().split("[\\s\\t]+");
-        int vMin = Integer.parseInt(verteces[0]);
-        int u;
+            if (verteces.length == 1) {
+                context.write(new VertexPair(vMin, vMin), new IntWritable(vMin));
+            } else {
+                //finds v_min
+                for (int i = 1; i < verteces.length; i++) {
+                    u = Integer.parseInt(verteces[i]);
+                    if (u < vMin) {
+                        vMin = u;
+                    }
+                }
 
-        if (verteces.length == 1) {
-            context.write(new VertexPair(vMin, vMin), new IntWritable(vMin));
-        } else {
-            //finds v_min
-            for (int i = 1; i < verteces.length; i++) {
-                u = Integer.parseInt(verteces[i]);
-                if (u < vMin) {
-                    vMin = u;
+                //builds (u, v_min) and (v_min, C_v)
+                for (String vertex : verteces) {
+                    u = Integer.parseInt(vertex);
+                    context.write(new VertexPair(vMin, u), new IntWritable(u));
+                    if (u != vMin) {
+                        context.write(new VertexPair(u, vMin), new IntWritable(vMin));
+                    }
                 }
             }
-
-            //builds (u, v_min) and (v_min, C_v)
-            for (String vertex : verteces) {
-                u = Integer.parseInt(vertex);
-                context.write(new VertexPair(vMin, u), new IntWritable(u));
-                context.write(new VertexPair(u, vMin), new IntWritable(vMin));
-            }
+        } else {
+            context.getCounter(JobCounters.MALFORMED_LINES).increment(1);
         }
-
     }
 }

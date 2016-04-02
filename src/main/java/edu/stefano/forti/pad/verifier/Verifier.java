@@ -63,7 +63,7 @@ public class Verifier extends Configured implements Tool{
         FileInputFormat.setInputPaths(verifierJob, input);
         FileOutputFormat.setOutputPath(verifierJob, new Path ("tmp"));
         verifierJob.waitForCompletion(true);
-        System.out.println("***********ERRORS: "+verifierJob.getCounters().findCounter(JobCounters.DUPLICATES).getValue());
+        System.out.println("Verifier Procedure. Errors: "+verifierJob.getCounters().findCounter(JobCounters.DUPLICATES).getValue());
 
         return 0;
     }

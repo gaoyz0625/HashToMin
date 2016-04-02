@@ -49,14 +49,17 @@ public class HashToMinMapper extends Mapper<LongWritable,Text,IntWritable,Cluste
             cluster.add(Integer.parseInt(v));         
         }
         
-        context.write(new IntWritable(cluster.first()), new ClusterWritable(cluster));
+        Integer vMin = cluster.first();
+        
+        context.write(new IntWritable(vMin), new ClusterWritable(cluster));
        
         //builds (u, v_min)
         TreeSet<Integer> cTmp = new TreeSet();
         cTmp.add(cluster.first());
         
         for (Integer u : cluster){
-            context.write(new IntWritable(u), new ClusterWritable(cTmp));
+            if (u.intValue() != vMin.intValue())
+                context.write(new IntWritable(u), new ClusterWritable(cTmp));
         }
        
     } 

@@ -23,10 +23,10 @@
  */
 package edu.stefano.forti.pad.connectedcomponents;
 
-import edu.stefano.forti.pad.hashtomin.HashToMin;
 import edu.stefano.forti.pad.verifier.Verifier;
 import edu.stefano.forti.pad.export.Export;
 import edu.stefano.forti.pad.hashtominsecondarysort.HashToMinSecondarySort;
+import edu.stefano.forti.pad.utils.JobCounters;
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -62,6 +62,7 @@ public class ConnectedComponents {
         int iterate = 1;
         int iterations = 0;
         Path inputTmp, outputTmp = null;
+        HashToMinSecondarySort hashToMin = null;
         
         while (iterate > 0 && iterations < MAX_ITERATIONS) {
 
@@ -73,7 +74,7 @@ public class ConnectedComponents {
 
             outputTmp = output.suffix(Integer.toString(iterations + 1));
             
-            HashToMinSecondarySort hashToMin = new HashToMinSecondarySort(inputTmp, outputTmp, this.reduceTasksNumber);
+            hashToMin = new HashToMinSecondarySort(inputTmp, outputTmp, this.reduceTasksNumber);
             iterate = hashToMin.run(null);
 
             if (iterations != 0) {
@@ -83,9 +84,12 @@ public class ConnectedComponents {
             iterations++;
         }
         
+        
         Export export = new Export(outputTmp, output);
         export.run(null);
         this.fileSystem.delete(outputTmp, true);
+        
+        
         
         if (verifyResult){
             Verifier verifier = new Verifier(output);
@@ -97,7 +101,8 @@ public class ConnectedComponents {
             System.out.println("Connected Components in " + iterations + " rounds.");
         else
             System.out.println("Connected Components in " + iterations + " round.");
-     
+        
+        
         return true;
     }
     

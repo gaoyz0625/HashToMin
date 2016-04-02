@@ -29,5 +29,6 @@ package edu.stefano.forti.pad.utils;
  */
     public enum JobCounters {
         GO_ON,
-        DUPLICATES
+        DUPLICATES,
+        MALFORMED_LINES
     }
