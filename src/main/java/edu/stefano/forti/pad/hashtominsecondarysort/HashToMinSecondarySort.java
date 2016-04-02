@@ -82,9 +82,9 @@ private Path input, output;
             result = 1;
         } else {
             result = 0;
-            System.out.println("HashToMin Procedure. Errors: "+ hashToMinJob.getCounters().findCounter(JobCounters.MALFORMED_LINES).getValue());
         }
 
+        System.out.println("HashToMin Procedure. Malformed lines found: "+ hashToMinJob.getCounters().findCounter(JobCounters.MALFORMED_LINES).getValue());
         return result;
     }
 }
