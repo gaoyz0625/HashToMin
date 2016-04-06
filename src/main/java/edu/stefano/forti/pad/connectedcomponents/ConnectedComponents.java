@@ -42,7 +42,7 @@ public class ConnectedComponents {
     private final int reduceTasksNumber;
     private final boolean verifyResult;
     private final FileSystem fileSystem;
-    private final static int MAX_ITERATIONS = 20; 
+    private final static int MAX_ITERATIONS = 30; 
    
 
     public ConnectedComponents(String input, String output, int reduceTasksNumber, boolean verifyResult) throws IOException{
@@ -63,9 +63,10 @@ public class ConnectedComponents {
         int iterations = 0;
         Path inputTmp, outputTmp = null;
         HashToMinSecondarySort hashToMin = null;
+        CountNodes countNodes = null;
         
         if(verifyResult){
-            CountNodes countNodes = new CountNodes(input, reduceTasksNumber);
+            countNodes = new CountNodes(input, reduceTasksNumber);
             countNodes.run(args);
             this.fileSystem.delete(new Path("tmp"), true);
         }
@@ -98,6 +99,23 @@ public class ConnectedComponents {
             Verifier verifier = new Verifier(output);
             verifier.run(null);
             fileSystem.delete(new Path("tmp"), true);
+            
+            long duplicates = verifier.getDuplicates();
+            long vertecesEnd = verifier.getVertecesEnd();
+            long vertecesStart = -1, malformedLines = -1;
+            if (countNodes!=null){
+                vertecesStart = countNodes.getVertecesStart();
+                malformedLines = countNodes.getMalformedLines();
+            }
+            
+            boolean check = duplicates == 0 && vertecesStart == vertecesEnd;
+            
+            System.out.println("Start. Verteces number: "+ vertecesStart);
+            System.out.println("Start. Malformed lines: " + malformedLines);
+            System.out.println("End. Verteces number: "+ vertecesEnd);
+            System.out.println("End. Duplicates: "+ duplicates);
+            System.out.println("Verifier test passed: " + Boolean.toString(check).toUpperCase());
+            
         }
         
         if (iterations > 1)

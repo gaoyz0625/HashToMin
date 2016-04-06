@@ -83,8 +83,7 @@ private Path input, output;
         } else {
             result = 0;
         }
-
-        System.out.println("HashToMin Procedure. Malformed lines found: "+ hashToMinJob.getCounters().findCounter(JobCounters.MALFORMED_LINES).getValue());
+        
         return result;
     }
 }

@@ -43,10 +43,19 @@ import org.apache.hadoop.util.Tool;
 public class CountNodes extends Configured implements Tool {
     private Path input;    
     private final int reduceTasksNumber;
+    private long vertecesStart, malformedLines;
     
     public CountNodes(Path input, int reduceTasksNumber){
         this.input = input;
         this.reduceTasksNumber = reduceTasksNumber;
+    }
+    
+    public long getVertecesStart(){
+        return vertecesStart;
+    }
+    
+    public long getMalformedLines(){
+        return malformedLines;
     }
 
     @Override
@@ -65,8 +74,10 @@ public class CountNodes extends Configured implements Tool {
 
         FileInputFormat.setInputPaths(countNodesJob, input);
         FileOutputFormat.setOutputPath(countNodesJob, new Path("tmp"));
-        countNodesJob.waitForCompletion(true);
-
+        countNodesJob.waitForCompletion(false);
+        
+        vertecesStart = countNodesJob.getCounters().findCounter(JobCounters.VERTECES_START).getValue();
+        malformedLines = countNodesJob.getCounters().findCounter(JobCounters.MALFORMED_LINES).getValue();
         return 0;
     }
 

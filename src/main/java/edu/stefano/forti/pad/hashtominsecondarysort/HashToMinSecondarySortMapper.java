@@ -41,6 +41,7 @@ public class HashToMinSecondarySortMapper extends Mapper<LongWritable, Text, Ver
     @Override
     public void map(LongWritable key, Text couple, Mapper.Context context)
             throws IOException, InterruptedException {
+        
         if (couple.toString().matches("[0-9\\s\\t]+")) {
             String[] verteces = couple.toString().split("[\\s\\t]+");
             int vMin = Integer.parseInt(verteces[0]);
@@ -66,8 +67,7 @@ public class HashToMinSecondarySortMapper extends Mapper<LongWritable, Text, Ver
                     }
                 }
             }
-        } else {
-            context.getCounter(JobCounters.MALFORMED_LINES).increment(1);
         }
+
     }
 }

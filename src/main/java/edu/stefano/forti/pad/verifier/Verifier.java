@@ -41,9 +41,18 @@ import org.apache.hadoop.util.*;
 public class Verifier extends Configured implements Tool{
     
     private Path input;
+    private long vertecesEnd, duplicates;
     
     public Verifier (Path input){
         this.input = input;
+    }
+    
+    public long getDuplicates(){
+        return duplicates;
+    }
+    
+    public long getVertecesEnd(){
+        return vertecesEnd;
     }
 
     @Override
@@ -64,14 +73,9 @@ public class Verifier extends Configured implements Tool{
         FileOutputFormat.setOutputPath(verifierJob, new Path ("tmp"));
         verifierJob.waitForCompletion(false);
         
-        long duplicates = verifierJob.getCounters().findCounter(JobCounters.DUPLICATES).getValue();
-        long vertecesStart = verifierJob.getCounters().findCounter(JobCounters.VERTECES_START).getValue();
-        long vertecesEnd = verifierJob.getCounters().findCounter(JobCounters.VERTECES_END).getValue();
-        boolean check = (duplicates == 0) && (vertecesStart == vertecesEnd);
-        System.out.println("Verifier Procedure. Duplicate nodes: "+duplicates);
-        System.out.println("Verteces at start: " + vertecesStart);
-        System.out.println("Verteces at end: " + vertecesEnd);
-        System.out.println("Check passed: " + check);
+        duplicates = verifierJob.getCounters().findCounter(JobCounters.DUPLICATES).getValue();
+        vertecesEnd = verifierJob.getCounters().findCounter(JobCounters.VERTECES_END).getValue();
+
         
         return 0;
     }

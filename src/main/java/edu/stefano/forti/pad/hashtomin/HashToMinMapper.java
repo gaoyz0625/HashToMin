@@ -34,32 +34,33 @@ import org.apache.hadoop.mapreduce.Mapper;
  *
  * @author stefano
  */
-public class HashToMinMapper extends Mapper<LongWritable,Text,IntWritable,ClusterWritable> {
+public class HashToMinMapper extends Mapper<LongWritable, Text, IntWritable, ClusterWritable> {
 
     @Override
     public void map(LongWritable key, Text couple, Mapper.Context context)
-        throws IOException, InterruptedException{
-        
-        String[] verteces = couple.toString().split("[\\s\\t]+");
-        TreeSet<Integer> cluster = new TreeSet();
-    
-        //builds (v_min, C_v)
-        for (String v : verteces) {
-            cluster.add(Integer.parseInt(v));         
+            throws IOException, InterruptedException {
+        if (couple.toString().matches("[0-9\\s\\t]+")) {
+            String[] verteces = couple.toString().split("[\\s\\t]+");
+            TreeSet<Integer> cluster = new TreeSet();
+
+            //builds (v_min, C_v)
+            for (String v : verteces) {
+                cluster.add(Integer.parseInt(v));
+            }
+
+            Integer vMin = cluster.first();
+
+            context.write(new IntWritable(vMin), new ClusterWritable(cluster));
+
+            //builds (u, v_min)
+            TreeSet<Integer> cTmp = new TreeSet();
+            cTmp.add(cluster.first());
+
+            for (Integer u : cluster) {
+                if (u.intValue() != vMin.intValue()) {
+                    context.write(new IntWritable(u), new ClusterWritable(cTmp));
+                }
+            }
         }
-        
-        Integer vMin = cluster.first();
-        
-        context.write(new IntWritable(vMin), new ClusterWritable(cluster));
-       
-        //builds (u, v_min)
-        TreeSet<Integer> cTmp = new TreeSet();
-        cTmp.add(cluster.first());
-        
-        for (Integer u : cluster){
-            if (u.intValue() != vMin.intValue())
-                context.write(new IntWritable(u), new ClusterWritable(cTmp));
-        }
-       
-    } 
+    }
 }

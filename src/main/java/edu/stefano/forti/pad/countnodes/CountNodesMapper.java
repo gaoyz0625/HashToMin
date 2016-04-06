@@ -23,6 +23,7 @@
  */
 package edu.stefano.forti.pad.countnodes;
 
+import edu.stefano.forti.pad.connectedcomponents.JobCounters;
 import edu.stefano.forti.pad.hashtomin.ClusterWritable;
 import java.io.IOException;
 import java.util.TreeSet;
@@ -43,10 +44,14 @@ public class CountNodesMapper extends Mapper<LongWritable,Text,IntWritable,NullW
         throws IOException, InterruptedException{ 
         NullWritable nw = NullWritable.get();
         
-        String[] verteces = clust.toString().split("[\\s\\t]+");
-        
-        for (String vertex : verteces) {
-            context.write(new IntWritable(Integer.parseInt(vertex)), nw);
+        if (clust.toString().matches("[0-9\\s\\t]+")) {
+            String[] verteces = clust.toString().split("[\\s\\t]+");
+
+            for (String vertex : verteces) {
+                context.write(new IntWritable(Integer.parseInt(vertex)), nw);
+            }
+        } else {
+            context.getCounter(JobCounters.MALFORMED_LINES).increment(1);
         }
         
        
