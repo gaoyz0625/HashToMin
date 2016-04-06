@@ -23,7 +23,7 @@
  */
 package edu.stefano.forti.pad.export;
 
-import edu.stefano.forti.pad.utils.ClusterWritable;
+import edu.stefano.forti.pad.hashtomin.ClusterWritable;
 import java.io.IOException;
 import java.util.TreeSet;
 import org.apache.hadoop.io.IntWritable;
@@ -35,22 +35,23 @@ import org.apache.hadoop.mapreduce.Mapper;
  *
  * @author stefano
  */
-public class ExportMapper extends Mapper<LongWritable,Text,IntWritable,ClusterWritable> {
+public class ExportMapper extends Mapper<LongWritable,Text,IntWritable,Text> {
 
     @Override
     public void map(LongWritable key, Text clust, Context context)
         throws IOException, InterruptedException{
         
         String[] verteces = clust.toString().split("[\\s\\t]+");
+        String result = new String();
         
-        TreeSet<Integer> tree = new TreeSet<Integer>();
-        
-        for (String t : verteces){
-            tree.add(Integer.parseInt(t));
+        for(int j = 1; j<verteces.length; j++){
+            result += verteces[j] + " ";
         }
         
+        result = result.trim();
+        
         if ((Integer.parseInt(verteces[0])) == (Integer.parseInt(verteces[1]))){
-            context.write(new IntWritable((Integer.parseInt(verteces[0]))), new ClusterWritable(tree) );
+            context.write(new IntWritable((Integer.parseInt(verteces[0]))), new Text(result) );
         }
        
     } 

@@ -23,7 +23,7 @@
  */
 package edu.stefano.forti.pad.hashtominsecondarysort;
 
-import edu.stefano.forti.pad.utils.JobCounters;
+import edu.stefano.forti.pad.connectedcomponents.JobCounters;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;

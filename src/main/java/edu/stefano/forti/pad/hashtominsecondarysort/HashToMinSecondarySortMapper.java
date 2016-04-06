@@ -23,8 +23,8 @@
  */
 package edu.stefano.forti.pad.hashtominsecondarysort;
 
-import edu.stefano.forti.pad.utils.ClusterWritable;
-import edu.stefano.forti.pad.utils.JobCounters;
+import edu.stefano.forti.pad.hashtomin.ClusterWritable;
+import edu.stefano.forti.pad.connectedcomponents.JobCounters;
 import java.io.IOException;
 import java.util.TreeSet;
 import org.apache.hadoop.io.IntWritable;

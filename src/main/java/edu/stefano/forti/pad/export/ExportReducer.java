@@ -23,7 +23,7 @@
  */
 package edu.stefano.forti.pad.export;
 
-import edu.stefano.forti.pad.utils.ClusterWritable;
+import edu.stefano.forti.pad.hashtomin.ClusterWritable;
 import java.io.IOException;
 
 import org.apache.hadoop.io.IntWritable;
@@ -34,14 +34,14 @@ import org.apache.hadoop.mapreduce.Reducer;
  *
  * @author stefano
  */
-public class ExportReducer extends Reducer<IntWritable, ClusterWritable, IntWritable, Text> {
+public class ExportReducer extends Reducer<IntWritable, Text, IntWritable, Text> {
 
     @Override
-    public void reduce(IntWritable vertex, Iterable<ClusterWritable> clusters, Context context)
+    public void reduce(IntWritable vertex, Iterable<Text> clusters, Context context)
             throws IOException, InterruptedException {
 
-        for (ClusterWritable c : clusters) {
-            context.write(vertex, new Text(c.toString()));
+        for (Text c : clusters) {
+            context.write(vertex, new Text(c));
         }
         
     }

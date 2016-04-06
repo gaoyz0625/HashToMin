@@ -21,14 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package edu.stefano.forti.pad.utils;
+package edu.stefano.forti.pad.countnodes;
+
+import edu.stefano.forti.pad.hashtomin.ClusterWritable;
+import java.io.IOException;
+import java.util.TreeSet;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
 
 /**
  *
  * @author stefano
  */
-    public enum JobCounters {
-        GO_ON,
-        DUPLICATES,
-        MALFORMED_LINES
-    }
+public class CountNodesMapper extends Mapper<LongWritable,Text,IntWritable,NullWritable> {
+
+    @Override
+    public void map(LongWritable key, Text clust, Context context)
+        throws IOException, InterruptedException{ 
+        NullWritable nw = NullWritable.get();
+        
+        String[] verteces = clust.toString().split("[\\s\\t]+");
+        
+        for (String vertex : verteces) {
+            context.write(new IntWritable(Integer.parseInt(vertex)), nw);
+        }
+        
+       
+    } 
+}

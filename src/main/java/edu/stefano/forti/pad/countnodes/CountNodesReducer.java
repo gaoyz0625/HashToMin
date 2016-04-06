@@ -21,53 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package edu.stefano.forti.pad.utils;
+package edu.stefano.forti.pad.countnodes;
 
-import java.io.*;
-import java.util.Collection;
-import java.util.TreeSet;
-import org.apache.hadoop.io.*;
+import edu.stefano.forti.pad.connectedcomponents.JobCounters;
+import edu.stefano.forti.pad.hashtomin.ClusterWritable;
+import java.io.IOException;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.mapreduce.Reducer;
 
 /**
  *
  * @author stefano
  */
-public class ClusterWritable extends TreeSet<Integer> implements Writable {
-
-    public ClusterWritable() {
-        super();
-    }
-
-    public ClusterWritable(Collection<Integer> c) {
-        super(c);
-    }
-
+public class CountNodesReducer extends Reducer<IntWritable, NullWritable, NullWritable, NullWritable> {
 
     @Override
-    public void write(DataOutput d) throws IOException {
-        int size = this.size();
-        d.writeInt(size);
-        for (Integer i : this.descendingSet()) {
-            d.writeInt(i);
-        }
-    }
-
-    @Override
-    public void readFields(DataInput di) throws IOException {
-        int size = di.readInt();
-        this.clear();
-        if (size > 0) {
-            for (int i = 0; i < size; i++) {
-                this.add(di.readInt());
-            }
-        }
-    }
-
-    @Override
-    public String toString() {
-        return super.toString().replaceAll("\\[", "")
-                .replaceAll("\\]", "")
-                .replaceAll(",", " ");
+    public void reduce(IntWritable vertex, Iterable<NullWritable> none, Context context)
+            throws IOException, InterruptedException {
+        
+        context.getCounter(JobCounters.VERTECES_START).increment(1);
+        
     }
 
 }

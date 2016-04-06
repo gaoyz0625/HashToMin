@@ -22,57 +22,51 @@
  * THE SOFTWARE.
  */
 
-package edu.stefano.forti.pad.verifier;
+package edu.stefano.forti.pad.countnodes;
 
 import edu.stefano.forti.pad.connectedcomponents.JobCounters;
+import edu.stefano.forti.pad.hashtomin.ClusterWritable;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.util.*;
+import org.apache.hadoop.util.Tool;
 
 /**
  *
  * @author stefano
  */
-public class Verifier extends Configured implements Tool{
+public class CountNodes extends Configured implements Tool {
+    private Path input;    
+    private final int reduceTasksNumber;
     
-    private Path input;
-    
-    public Verifier (Path input){
+    public CountNodes(Path input, int reduceTasksNumber){
         this.input = input;
+        this.reduceTasksNumber = reduceTasksNumber;
     }
 
     @Override
     public int run(String[] strings) throws Exception {
+        
+        Job countNodesJob = new Job();
 
-        Job verifierJob = new Job();
-        
-        verifierJob.setJarByClass(Verifier.class);
-        verifierJob.setMapperClass(VerifierMapper.class);
-        verifierJob.setReducerClass(VerifierReducer.class);
-        verifierJob.setNumReduceTasks(1);
-        verifierJob.setMapOutputKeyClass(IntWritable.class);
-        verifierJob.setMapOutputValueClass(NullWritable.class);
-        verifierJob.setOutputKeyClass(NullWritable.class);
-        verifierJob.setOutputValueClass(NullWritable.class);
+        countNodesJob.setJarByClass(CountNodes.class);
+        countNodesJob.setMapperClass(CountNodesMapper.class);
+        countNodesJob.setReducerClass(CountNodesReducer.class);
+        countNodesJob.setNumReduceTasks(reduceTasksNumber);
+        countNodesJob.setMapOutputKeyClass(IntWritable.class);
+        countNodesJob.setMapOutputValueClass(NullWritable.class);
+        countNodesJob.setOutputKeyClass(NullWritable.class);
+        countNodesJob.setOutputValueClass(NullWritable.class);
 
-        FileInputFormat.setInputPaths(verifierJob, input);
-        FileOutputFormat.setOutputPath(verifierJob, new Path ("tmp"));
-        verifierJob.waitForCompletion(false);
-        
-        long duplicates = verifierJob.getCounters().findCounter(JobCounters.DUPLICATES).getValue();
-        long vertecesStart = verifierJob.getCounters().findCounter(JobCounters.VERTECES_START).getValue();
-        long vertecesEnd = verifierJob.getCounters().findCounter(JobCounters.VERTECES_END).getValue();
-        boolean check = (duplicates == 0) && (vertecesStart == vertecesEnd);
-        System.out.println("Verifier Procedure. Duplicate nodes: "+duplicates);
-        System.out.println("Verteces at start: " + vertecesStart);
-        System.out.println("Verteces at end: " + vertecesEnd);
-        System.out.println("Check passed: " + check);
-        
+        FileInputFormat.setInputPaths(countNodesJob, input);
+        FileOutputFormat.setOutputPath(countNodesJob, new Path("tmp"));
+        countNodesJob.waitForCompletion(true);
+
         return 0;
     }
 

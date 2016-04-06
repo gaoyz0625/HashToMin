@@ -21,33 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package edu.stefano.forti.pad.verifier;
-
-import java.io.IOException;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper;
+package edu.stefano.forti.pad.connectedcomponents;
 
 /**
  *
  * @author stefano
  */
-public class VerifierMapper extends Mapper<LongWritable,Text,IntWritable,NullWritable> {
-
-    @Override
-    public void map(LongWritable key, Text clust, Context context)
-        throws IOException, InterruptedException{
-        
-        NullWritable nw = NullWritable.get();
-        
-        String[] verteces = clust.toString().split("[\\s\\t]+");
-        
-        for (int j = 1; j < verteces.length; j++){
-            String t = verteces[j];
-            context.write(new IntWritable(Integer.parseInt(t)), nw);
-        }
-       
-    } 
-}
+    public enum JobCounters {
+        GO_ON,
+        DUPLICATES,
+        MALFORMED_LINES,
+        VERTECES_END,
+        VERTECES_START
+    }

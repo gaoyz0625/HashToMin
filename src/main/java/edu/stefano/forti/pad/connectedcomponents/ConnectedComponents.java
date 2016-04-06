@@ -23,10 +23,10 @@
  */
 package edu.stefano.forti.pad.connectedcomponents;
 
+import edu.stefano.forti.pad.countnodes.CountNodes;
 import edu.stefano.forti.pad.verifier.Verifier;
 import edu.stefano.forti.pad.export.Export;
 import edu.stefano.forti.pad.hashtominsecondarysort.HashToMinSecondarySort;
-import edu.stefano.forti.pad.utils.JobCounters;
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -64,6 +64,12 @@ public class ConnectedComponents {
         Path inputTmp, outputTmp = null;
         HashToMinSecondarySort hashToMin = null;
         
+        if(verifyResult){
+            CountNodes countNodes = new CountNodes(input, reduceTasksNumber);
+            countNodes.run(args);
+            this.fileSystem.delete(new Path("tmp"), true);
+        }
+   
         while (iterate > 0 && iterations < MAX_ITERATIONS) {
 
             if (iterations == 0) {
@@ -83,14 +89,11 @@ public class ConnectedComponents {
 
             iterations++;
         }
-        
-        
+
         Export export = new Export(outputTmp, output);
         export.run(null);
         this.fileSystem.delete(outputTmp, true);
-        
-        
-        
+
         if (verifyResult){
             Verifier verifier = new Verifier(output);
             verifier.run(null);

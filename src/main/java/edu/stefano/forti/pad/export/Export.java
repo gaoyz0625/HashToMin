@@ -24,7 +24,7 @@
 
 package edu.stefano.forti.pad.export;
 
-import edu.stefano.forti.pad.utils.ClusterWritable;
+import edu.stefano.forti.pad.hashtomin.ClusterWritable;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -56,7 +56,7 @@ public class Export extends Configured implements Tool {
         exportJob.setReducerClass(ExportReducer.class);
         exportJob.setNumReduceTasks(1);
         exportJob.setMapOutputKeyClass(IntWritable.class);
-        exportJob.setMapOutputValueClass(ClusterWritable.class);
+        exportJob.setMapOutputValueClass(Text.class);
         exportJob.setOutputKeyClass(IntWritable.class);
         exportJob.setOutputValueClass(Text.class);
 

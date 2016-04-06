@@ -23,7 +23,7 @@
  */
 package edu.stefano.forti.pad.verifier;
 
-import edu.stefano.forti.pad.utils.JobCounters;
+import edu.stefano.forti.pad.connectedcomponents.JobCounters;
 import java.io.IOException;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -34,17 +34,21 @@ import org.apache.hadoop.mapreduce.Reducer;
  *
  * @author stefano
  */
-public class VerifierReducer extends Reducer<IntWritable, IntWritable, NullWritable, NullWritable> {
+public class VerifierReducer extends Reducer<IntWritable, NullWritable, NullWritable, NullWritable> {
 
     @Override
-    public void reduce(IntWritable vertex, Iterable<IntWritable> occurrences, Context context)
+    public void reduce(IntWritable vertex, Iterable<NullWritable> occurrences, Context context)
             throws IOException, InterruptedException {
         int copies = 0;
-        for (IntWritable occ : occurrences) {
+        
+        context.getCounter(JobCounters.VERTECES_END).increment(1);
+        
+        for (NullWritable occ : occurrences) {
             copies++;
             if(copies > 1){
                 context.getCounter(JobCounters.DUPLICATES).increment(1);
             }
+            
         }
         
     }

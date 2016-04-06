@@ -23,43 +23,51 @@
  */
 package edu.stefano.forti.pad.hashtomin;
 
-import java.io.IOException;
+import java.io.*;
+import java.util.Collection;
 import java.util.TreeSet;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.io.*;
 
 /**
  *
  * @author stefano
  */
-public class HashToMinMapper extends Mapper<LongWritable,Text,IntWritable,ClusterWritable> {
+public class ClusterWritable extends TreeSet<Integer> implements Writable {
+
+    public ClusterWritable() {
+        super();
+    }
+
+    public ClusterWritable(Collection<Integer> c) {
+        super(c);
+    }
+
 
     @Override
-    public void map(LongWritable key, Text couple, Mapper.Context context)
-        throws IOException, InterruptedException{
-        
-        String[] verteces = couple.toString().split("[\\s\\t]+");
-        TreeSet<Integer> cluster = new TreeSet();
-    
-        //builds (v_min, C_v)
-        for (String v : verteces) {
-            cluster.add(Integer.parseInt(v));         
+    public void write(DataOutput d) throws IOException {
+        int size = this.size();
+        d.writeInt(size);
+        for (Integer i : this.descendingSet()) {
+            d.writeInt(i);
         }
-        
-        Integer vMin = cluster.first();
-        
-        context.write(new IntWritable(vMin), new ClusterWritable(cluster));
-       
-        //builds (u, v_min)
-        TreeSet<Integer> cTmp = new TreeSet();
-        cTmp.add(cluster.first());
-        
-        for (Integer u : cluster){
-            if (u.intValue() != vMin.intValue())
-                context.write(new IntWritable(u), new ClusterWritable(cTmp));
+    }
+
+    @Override
+    public void readFields(DataInput di) throws IOException {
+        int size = di.readInt();
+        this.clear();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                this.add(di.readInt());
+            }
         }
-       
-    } 
+    }
+
+    @Override
+    public String toString() {
+        return super.toString().replaceAll("\\[", "")
+                .replaceAll("\\]", "")
+                .replaceAll(",", " ");
+    }
+
 }
