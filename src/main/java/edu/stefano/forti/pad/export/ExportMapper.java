@@ -44,7 +44,7 @@ public class ExportMapper extends Mapper<LongWritable,Text,IntWritable,Text> {
         String[] verteces = clust.toString().split("[\\s\\t]+");
         String result = new String();
         
-        for(int j = 1; j<verteces.length; j++){
+        for(int j = 1; j < verteces.length; j++){
             result += verteces[j] + " ";
         }
         
