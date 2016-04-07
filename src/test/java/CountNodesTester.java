@@ -23,7 +23,7 @@ import org.junit.Test;
 /*
  * The MIT License
  *
- * Copyright 2016 stefano.
+ * Copyright 2016 Stefano Forti.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
