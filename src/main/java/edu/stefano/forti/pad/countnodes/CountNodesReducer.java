@@ -24,7 +24,6 @@
 package edu.stefano.forti.pad.countnodes;
 
 import edu.stefano.forti.pad.connectedcomponents.JobCounters;
-import edu.stefano.forti.pad.hashtomin.ClusterWritable;
 import java.io.IOException;
 
 import org.apache.hadoop.io.IntWritable;

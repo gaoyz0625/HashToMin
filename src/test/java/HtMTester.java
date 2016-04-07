@@ -1,18 +1,9 @@
-
 import edu.stefano.forti.pad.hashtomin.ClusterWritable;
 import edu.stefano.forti.pad.hashtomin.HashToMinMapper;
 import edu.stefano.forti.pad.hashtomin.HashToMinReducer;
-import edu.stefano.forti.pad.hashtominsecondarysort.HashToMinGroupComparator;
-import edu.stefano.forti.pad.hashtominsecondarysort.HashToMinKeyComparator;
-import edu.stefano.forti.pad.hashtominsecondarysort.HashToMinSecondarySortMapper;
-import edu.stefano.forti.pad.hashtominsecondarysort.HashToMinSecondarySortReducer;
-import edu.stefano.forti.pad.hashtominsecondarysort.VertexPair;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -91,20 +82,27 @@ public class HtMTester {
  
   @Test
   public void processesValidRecordReducer() throws IOException {
-    ClusterWritable values = new ClusterWritable();
-    values.add(1);
-    values.add(1);
-    values.add(2);
+    ClusterWritable values1 = new ClusterWritable();
+    values1.add(1);
+    values1.add(1);
+    values1.add(2);
+    
+    ClusterWritable values2 = new ClusterWritable();
+    values2.add(1);
+    values2.add(3);
+    values2.add(3);
+    
     
     List<ClusterWritable> list = new ArrayList<ClusterWritable>();
-    list.add(values);
+    list.add(values1);
+    list.add(values2);
 
     reduceDriver.withInput(new IntWritable(1), list);
-    reduceDriver.withOutput(new IntWritable(1), new Text("1 2") );
+    reduceDriver.withOutput(new IntWritable(1), new Text("1 2 3") );
     reduceDriver.runTest();
   }
   
-   @Test
+  @Test
   public void processesValidRecordMapReduce() throws IOException {
     List<Pair<LongWritable,Text>> inputs = new ArrayList<Pair<LongWritable,Text>>();
     inputs.add(new Pair(new LongWritable(), new Text("1\t2 3 4 5")));

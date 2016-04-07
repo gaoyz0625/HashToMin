@@ -81,10 +81,13 @@ public class HtMSSMapReducerTester {
     List<IntWritable> values = new ArrayList<IntWritable>();
     values.add(new IntWritable(1));
     values.add(new IntWritable(1));
+    values.add(new IntWritable(1));
     values.add(new IntWritable(2));
+    values.add(new IntWritable(3));
+    values.add(new IntWritable(3));
 
     reduceDriver.withInput(new VertexPair(1,1), values);
-    reduceDriver.withOutput(new IntWritable(1), new Text("1 2") );
+    reduceDriver.withOutput(new IntWritable(1), new Text("1 2 3") );
     reduceDriver.runTest();
   }
   
