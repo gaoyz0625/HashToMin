@@ -40,7 +40,7 @@ import org.junit.Test;
  *
  * @author stefano
  */
-public class MapReducerTester {
+public class HtMSSMapReducerTester {
   static MapDriver<LongWritable, Text, VertexPair, IntWritable> mapDriver;
   static ReduceDriver<VertexPair, IntWritable, IntWritable, Text> reduceDriver;
   static MapReduceDriver<LongWritable, Text, VertexPair, IntWritable, IntWritable, Text> mapReduceDriver;
@@ -58,10 +58,7 @@ public class MapReducerTester {
   }
  
   @Test
-  public void testMapper() throws IOException {
-
-//    mapDriver.addInput(new LongWritable(2), new Text("5\t3 4 5"));
-    
+  public void processesValidRecordMapper() throws IOException {  
     mapDriver.withInput(new LongWritable(1), new Text("1\t1 2 4"))
             .withOutput(new VertexPair(1,1), new IntWritable(1))
             .withOutput(new VertexPair(1,1), new IntWritable(1))
@@ -71,9 +68,16 @@ public class MapReducerTester {
             .withOutput(new VertexPair(4,1), new IntWritable(1));
     mapDriver.runTest();
   }
+  
+  @Test
+  public void ignoreMalformedInputMapper() throws IOException{
+      mapDriver.withInput(new LongWritable(1), new Text("#\t1 2 4"))
+              .runTest();
+      
+  }
  
   @Test
-  public void testReducer() throws IOException {
+  public void processesValidRecordReducer() throws IOException {
     List<IntWritable> values = new ArrayList<IntWritable>();
     values.add(new IntWritable(1));
     values.add(new IntWritable(1));
@@ -85,10 +89,7 @@ public class MapReducerTester {
   }
   
    @Test
-
-  public void testMapReduce() throws IOException {
-
-      
+  public void processesValidRecordMapReduce() throws IOException {
     List<Pair<LongWritable,Text>> inputs = new ArrayList<Pair<LongWritable,Text>>();
     inputs.add(new Pair(new LongWritable(), new Text("1\t2 3 4 5")));
     inputs.add(new Pair(new LongWritable(), new Text("2\t1")));

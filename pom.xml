@@ -20,7 +20,11 @@
                     <version>2.16</version>
                     <configuration> 
                         <includes> 
-                            <include>MapReducerTester.java</include> 
+                            <include>HtMSSMapReducerTester.java</include> 
+                            <include>CountNodesTester.java</include>
+                            <include>ExportTester.java</include>
+                            <include>HtMTester.java</include>
+                            <include>VerifierTester.java</include>
                         </includes> 
                     </configuration> 
                 </plugin>
