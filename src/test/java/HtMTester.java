@@ -91,14 +91,17 @@ public class HtMTester {
  
   @Test
   public void processesValidRecordReducer() throws IOException {
-//    List<IntWritable> values = new ArrayList<IntWritable>();
-//    values.add(new IntWritable(1));
-//    values.add(new IntWritable(1));
-//    values.add(new IntWritable(2));
-//
-//    reduceDriver.withInput(new VertexPair(1,1), values);
-//    reduceDriver.withOutput(new IntWritable(1), new Text("1 2") );
-//    reduceDriver.runTest();
+    ClusterWritable values = new ClusterWritable();
+    values.add(1);
+    values.add(1);
+    values.add(2);
+    
+    List<ClusterWritable> list = new ArrayList<ClusterWritable>();
+    list.add(values);
+
+    reduceDriver.withInput(new IntWritable(1), list);
+    reduceDriver.withOutput(new IntWritable(1), new Text("1 2") );
+    reduceDriver.runTest();
   }
   
    @Test
