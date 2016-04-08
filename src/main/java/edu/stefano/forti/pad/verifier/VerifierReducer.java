@@ -40,17 +40,17 @@ public class VerifierReducer extends Reducer<IntWritable, NullWritable, NullWrit
     public void reduce(IntWritable vertex, Iterable<NullWritable> occurrences, Context context)
             throws IOException, InterruptedException {
         int copies = 0;
-        
+
         context.getCounter(JobCounters.VERTECES_END).increment(1);
-        
+
         for (NullWritable occ : occurrences) {
             copies++;
-            if(copies > 1){
-                context.getCounter(JobCounters.DUPLICATES).increment(1);
-            }
-            
         }
-        
+
+        if (copies > 1) {
+            context.getCounter(JobCounters.DUPLICATES).increment(copies-1);
+        }
+
     }
 
 }
