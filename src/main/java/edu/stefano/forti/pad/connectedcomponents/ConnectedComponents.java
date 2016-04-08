@@ -86,9 +86,9 @@ public class ConnectedComponents {
             
             
             if (secondarySort)
-                hashToMin = new HashToMinSecondarySort(inputTmp, outputTmp, this.reduceTasksNumber);
+                hashToMin = new HashToMinSecondarySort(inputTmp, outputTmp, reduceTasksNumber);
             else 
-                hashToMin = new HashToMin(inputTmp, outputTmp, this.reduceTasksNumber);
+                hashToMin = new HashToMin(inputTmp, outputTmp, reduceTasksNumber);
             
             iterate = hashToMin.run(null);
 
@@ -104,7 +104,7 @@ public class ConnectedComponents {
         this.fileSystem.delete(outputTmp, true);
 
         if (verifyResult){
-            Verifier verifier = new Verifier(output);
+            Verifier verifier = new Verifier(output, reduceTasksNumber);
             verifier.run(null);
             fileSystem.delete(new Path("tmp"), true);
             
@@ -136,7 +136,7 @@ public class ConnectedComponents {
     }
     
     public static void main(String[] args) throws Exception {
-        ConnectedComponents connected = new ConnectedComponents(args[0], args[1], Integer.parseInt(args[2]), true, false);
+        ConnectedComponents connected = new ConnectedComponents(args[0], args[1], Integer.parseInt(args[2]), true, true);
         connected.run(null);
     }
     

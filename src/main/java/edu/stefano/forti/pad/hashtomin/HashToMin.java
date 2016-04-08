@@ -41,7 +41,7 @@ import org.apache.hadoop.util.Tool;
  */
 public class HashToMin extends HtM{
 
-    private Path input, output;
+    private final Path input, output;
     private final int reduceTasksNumber;
 
     public HashToMin(Path input, Path output, int reduceTasksNumber) {

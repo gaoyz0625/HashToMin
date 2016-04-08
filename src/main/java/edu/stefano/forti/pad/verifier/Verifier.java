@@ -40,11 +40,13 @@ import org.apache.hadoop.util.*;
  */
 public class Verifier extends Configured implements Tool{
     
-    private Path input;
+    private final Path input;
     private long vertecesEnd, duplicates;
+    private final int reduceTasksNumber;
     
-    public Verifier (Path input){
+    public Verifier (Path input, int reduceTasksNumber){
         this.input = input;
+        this.reduceTasksNumber = reduceTasksNumber;
     }
     
     public long getDuplicates(){
@@ -63,7 +65,7 @@ public class Verifier extends Configured implements Tool{
         verifierJob.setJarByClass(Verifier.class);
         verifierJob.setMapperClass(VerifierMapper.class);
         verifierJob.setReducerClass(VerifierReducer.class);
-        verifierJob.setNumReduceTasks(1);
+        verifierJob.setNumReduceTasks(reduceTasksNumber);
         verifierJob.setMapOutputKeyClass(IntWritable.class);
         verifierJob.setMapOutputValueClass(NullWritable.class);
         verifierJob.setOutputKeyClass(NullWritable.class);
