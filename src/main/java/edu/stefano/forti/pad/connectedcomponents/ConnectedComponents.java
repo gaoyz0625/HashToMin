@@ -26,6 +26,7 @@ package edu.stefano.forti.pad.connectedcomponents;
 import edu.stefano.forti.pad.countnodes.CountNodes;
 import edu.stefano.forti.pad.verifier.Verifier;
 import edu.stefano.forti.pad.export.Export;
+import edu.stefano.forti.pad.hashtomin.HashToMin;
 import edu.stefano.forti.pad.hashtominsecondarysort.HashToMinSecondarySort;
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
@@ -41,16 +42,18 @@ public class ConnectedComponents {
     private final Path input, output;
     private final int reduceTasksNumber;
     private final boolean verifyResult;
+    private final boolean secondarySort;
     private final FileSystem fileSystem;
     private final static int MAX_ITERATIONS = 30; 
    
 
-    public ConnectedComponents(String input, String output, int reduceTasksNumber, boolean verifyResult) throws IOException{
+    public ConnectedComponents(String input, String output, int reduceTasksNumber, boolean verifyResult, boolean secondarySort) throws IOException{
         this.input = new Path(input);
         this.output = new Path(output);
         this.reduceTasksNumber = reduceTasksNumber;
         this.verifyResult = verifyResult;
         this.fileSystem = FileSystem.get(new Configuration());
+        this.secondarySort = secondarySort;
     }
 
     /**
@@ -62,7 +65,7 @@ public class ConnectedComponents {
         int iterate = 1;
         int iterations = 0;
         Path inputTmp, outputTmp = null;
-        HashToMinSecondarySort hashToMin = null;
+        HtM hashToMin = null;
         CountNodes countNodes = null;
         
         if(verifyResult){
@@ -81,7 +84,12 @@ public class ConnectedComponents {
 
             outputTmp = output.suffix(Integer.toString(iterations + 1));
             
-            hashToMin = new HashToMinSecondarySort(inputTmp, outputTmp, this.reduceTasksNumber);
+            
+            if (secondarySort)
+                hashToMin = new HashToMinSecondarySort(inputTmp, outputTmp, this.reduceTasksNumber);
+            else 
+                hashToMin = new HashToMin(inputTmp, outputTmp, this.reduceTasksNumber);
+            
             iterate = hashToMin.run(null);
 
             if (iterations != 0) {
@@ -128,7 +136,7 @@ public class ConnectedComponents {
     }
     
     public static void main(String[] args) throws Exception {
-        ConnectedComponents connected = new ConnectedComponents(args[0], args[1], Integer.parseInt(args[2]), true);
+        ConnectedComponents connected = new ConnectedComponents(args[0], args[1], Integer.parseInt(args[2]), true, false);
         connected.run(null);
     }
     

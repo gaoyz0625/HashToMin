@@ -23,6 +23,7 @@
  */
 package edu.stefano.forti.pad.hashtominsecondarysort;
 
+import edu.stefano.forti.pad.connectedcomponents.HtM;
 import edu.stefano.forti.pad.connectedcomponents.JobCounters;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -38,7 +39,7 @@ import org.apache.hadoop.util.Tool;
  *
  * @author stefano
  */
-public class HashToMinSecondarySort extends Configured implements Tool {
+public class HashToMinSecondarySort extends HtM {
 private Path input, output;
     private final int reduceTasksNumber;
 
