@@ -36,7 +36,14 @@ import org.apache.hadoop.mapreduce.Reducer;
  * @author stefano
  */
 public class HashToMinReducer extends Reducer<IntWritable, ClusterWritable, IntWritable, Text> {
-
+    /**
+     * HtM reducer.
+     * @param vertex
+     * @param clusters
+     * @param context
+     * @throws IOException
+     * @throws InterruptedException 
+     */
     @Override
     public void reduce(IntWritable vertex, Iterable<ClusterWritable> clusters, Context context)
             throws IOException, InterruptedException {

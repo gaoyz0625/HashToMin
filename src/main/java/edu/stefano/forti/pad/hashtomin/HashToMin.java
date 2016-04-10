@@ -25,7 +25,6 @@ package edu.stefano.forti.pad.hashtomin;
 
 import edu.stefano.forti.pad.connectedcomponents.HtM;
 import edu.stefano.forti.pad.connectedcomponents.JobCounters;
-import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -33,10 +32,9 @@ import org.apache.hadoop.mapreduce.Counters;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.util.Tool;
 
 /**
- *
+ * Implements a version of HtM without secondary sort.
  * @author stefano
  */
 public class HashToMin extends HtM{
@@ -71,7 +69,7 @@ public class HashToMin extends HtM{
         FileOutputFormat.setOutputPath(hashToMinJob, output);
 
         hashToMinJob.waitForCompletion(true);
-
+        //retrieve the GO_ON counter, if > 0 must return a positive value
         Counters counters = hashToMinJob.getCounters();
         iterate = counters.findCounter(JobCounters.GO_ON).getValue();
         counters.findCounter(JobCounters.GO_ON).setValue(0);

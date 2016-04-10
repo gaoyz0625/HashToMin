@@ -35,12 +35,19 @@ import org.apache.hadoop.mapreduce.Mapper;
  * @author stefano
  */
 public class HashToMinMapper extends Mapper<LongWritable, Text, IntWritable, ClusterWritable> {
-
+    /**
+     * 
+     * @param key
+     * @param line
+     * @param context
+     * @throws IOException
+     * @throws InterruptedException 
+     */
     @Override
-    public void map(LongWritable key, Text couple, Mapper.Context context)
+    public void map(LongWritable key, Text line, Mapper.Context context)
             throws IOException, InterruptedException {
-        if (couple.toString().matches("[0-9\\s\\t]+")) {
-            String[] verteces = couple.toString().split("[\\s\\t]+");
+        if (line.toString().matches("[0-9\\s\\t]+")) { //only numbers, spaces or tabs allowed
+            String[] verteces = line.toString().split("[\\s\\t]+");
             TreeSet<Integer> cluster = new TreeSet();
 
             //builds (v_min, C_v)

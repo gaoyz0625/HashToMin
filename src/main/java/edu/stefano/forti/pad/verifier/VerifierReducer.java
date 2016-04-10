@@ -35,18 +35,25 @@ import org.apache.hadoop.mapreduce.Reducer;
  * @author stefano
  */
 public class VerifierReducer extends Reducer<IntWritable, NullWritable, NullWritable, NullWritable> {
-
+    /**
+     * Increment a counter when duplicates are found.
+     * @param vertex
+     * @param occurrences
+     * @param context
+     * @throws IOException
+     * @throws InterruptedException 
+     */
     @Override
     public void reduce(IntWritable vertex, Iterable<NullWritable> occurrences, Context context)
             throws IOException, InterruptedException {
         int copies = 0;
 
         context.getCounter(JobCounters.VERTECES_END).increment(1);
-
+        //counts duplicates
         for (NullWritable occ : occurrences) {
             copies++;
         }
-
+        //are ther duplicates? increment the counter!
         if (copies > 1) {
             context.getCounter(JobCounters.DUPLICATES).increment(copies-1);
         }

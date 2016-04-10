@@ -49,7 +49,7 @@ public class HashToMinSecondarySortReducer extends Reducer<VertexPair, IntWritab
         
         prevNode = iterator.next().get();
         vMin = prevNode;
-        
+        //removes duplicates via a scan, values have been sorted via secondary sort
         while(iterator.hasNext()){
             currNode = iterator.next().get();
             if (prevNode != currNode){

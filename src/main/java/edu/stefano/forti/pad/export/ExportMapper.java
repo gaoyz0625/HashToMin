@@ -36,12 +36,20 @@ import org.apache.hadoop.mapreduce.Mapper;
  * @author stefano
  */
 public class ExportMapper extends Mapper<LongWritable,Text,IntWritable,Text> {
-
+    /**
+     * Checks if the label of a cluster and its minimum value coincide; only
+     * outputs those lines for which this property holds.
+     * @param key
+     * @param line
+     * @param context
+     * @throws IOException
+     * @throws InterruptedException 
+     */
     @Override
-    public void map(LongWritable key, Text clust, Context context)
+    public void map(LongWritable key, Text line, Context context)
         throws IOException, InterruptedException{
         
-        String[] verteces = clust.toString().split("[\\s\\t]+");
+        String[] verteces = line.toString().split("[\\s\\t]+");
         String result = new String();
         
         for(int j = 1; j < verteces.length; j++){
