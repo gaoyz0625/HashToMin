@@ -3,7 +3,11 @@ A Hadoop MapReduce implementation of the [HashToMin algorithm](http://citeseerx.
 
 The usage is fairly simple and it is listed below. Instantiate the class
 ```java
-public ConnectedComponents (String input, String output, int reduceTasksNumber, boolean verifyResult, boolean secondarySort) 
+public ConnectedComponents (String input,
+String output, 
+int reduceTasksNumber,
+boolean verifyResult,
+boolean secondarySort) 
 ```
 where 
 - input and output specify the input and output ﬁle paths,
