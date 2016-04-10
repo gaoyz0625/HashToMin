@@ -58,10 +58,10 @@ public class HashToMinSecondarySortReducer extends Reducer<VertexPair, IntWritab
                 length++;
             }
         }
-        
+        //adds last node
         result += prevNode;
         
-        if (vertex.getFirst() > vMin && length > 1 )
+        if (vertex.getFirst() > vMin && length > 1 ) //checks the stopping criterion
             context.getCounter(JobCounters.GO_ON).increment(1);
         
         context.write(new IntWritable(vertex.getFirst()),new Text(result));

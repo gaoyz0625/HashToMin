@@ -35,7 +35,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.*;
 
 /**
- *
+ * It represents the output verifier tasks, must run after HtM.
  * @author stefano
  */
 public class Verifier extends Configured implements Tool{

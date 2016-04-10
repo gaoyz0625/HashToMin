@@ -23,10 +23,7 @@
  */
 package edu.stefano.forti.pad.hashtominsecondarysort;
 
-import edu.stefano.forti.pad.hashtomin.ClusterWritable;
-import edu.stefano.forti.pad.connectedcomponents.JobCounters;
 import java.io.IOException;
-import java.util.TreeSet;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -42,7 +39,7 @@ public class HashToMinSecondarySortMapper extends Mapper<LongWritable, Text, Ver
     public void map(LongWritable key, Text couple, Mapper.Context context)
             throws IOException, InterruptedException {
         
-        if (couple.toString().matches("[0-9\\s\\t]+")) {
+        if (couple.toString().matches("[0-9\\s\\t]+")) { //only numbers, spaces, tabs allowed
             String[] verteces = couple.toString().split("[\\s\\t]+");
             int vMin = Integer.parseInt(verteces[0]);
             int u;

@@ -35,7 +35,14 @@ import org.apache.hadoop.mapreduce.Mapper;
  * @author stefano
  */
 public class VerifierMapper extends Mapper<LongWritable,Text,IntWritable,NullWritable> {
-
+    /**
+     * Outputs <v, null> for each vertex v in each line.
+     * @param key
+     * @param clust
+     * @param context
+     * @throws IOException
+     * @throws InterruptedException 
+     */
     @Override
     public void map(LongWritable key, Text clust, Context context)
         throws IOException, InterruptedException{

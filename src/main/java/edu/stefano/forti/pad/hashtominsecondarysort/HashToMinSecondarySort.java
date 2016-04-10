@@ -36,7 +36,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 
 /**
- *
+ * HtM job with secondary sort capability.
  * @author stefano
  */
 public class HashToMinSecondarySort extends HtM {

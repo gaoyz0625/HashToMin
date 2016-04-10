@@ -26,7 +26,10 @@ package edu.stefano.forti.pad.hashtominsecondarysort;
 import java.io.*;
 
 import org.apache.hadoop.io.*;
-
+/**
+ * A couple of nodes.
+ * @author stefano
+ */
 public class VertexPair implements WritableComparable<VertexPair> {
 
   private int first;
