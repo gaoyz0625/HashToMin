@@ -25,6 +25,7 @@
 package edu.stefano.forti.pad.countnodes;
 
 import edu.stefano.forti.pad.connectedcomponents.JobCounters;
+import java.io.IOException;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -59,7 +60,7 @@ public class CountNodes extends Configured implements Tool {
     }
 
     @Override
-    public int run(String[] strings) throws Exception {
+    public int run(String[] strings) throws IOException, ClassNotFoundException, InterruptedException  {
         
         Job countNodesJob = new Job();
 

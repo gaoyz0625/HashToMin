@@ -29,6 +29,8 @@ import edu.stefano.forti.pad.export.Export;
 import edu.stefano.forti.pad.hashtomin.HashToMin;
 import edu.stefano.forti.pad.hashtominsecondarysort.HashToMinSecondarySort;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -55,27 +57,31 @@ public class ConnectedComponents {
      * @param secondarySort true for using the secondary sort capability
      * @throws IOException 
      */
-    public ConnectedComponents(String input, String output, int reduceTasksNumber, boolean verifyResult, boolean secondarySort) throws IOException{
+    public ConnectedComponents(String input, String output, int reduceTasksNumber, boolean verifyResult, boolean secondarySort) throws HtMException {
         this.input = new Path(input);
         this.output = new Path(output);
         this.reduceTasksNumber = reduceTasksNumber;
         this.verifyResult = verifyResult;
-        this.fileSystem = FileSystem.get(new Configuration());
+        try {
+            this.fileSystem = FileSystem.get(new Configuration());
+        } catch (IOException ex) {
+           throw new HtMException(ex.getMessage());
+        }
         this.secondarySort = secondarySort;
     }
 
     /**
      * @param args the command line arguments
-     * @return 
-     * @throws java.lang.Exception
+     * @return
+     * @throws edu.stefano.forti.pad.connectedcomponents.HtMException
      */
-    public boolean run(String[] args) throws Exception {
+    public boolean run(String[] args) throws HtMException {
         int iterate = 1; //start HtM when > 0
         int iterations = 0; //counts the HtM rounds
         Path inputTmp, outputTmp = null;
         HtM hashToMin = null;
         CountNodes countNodes = null;
-        
+        try{
         if(verifyResult){
             countNodes = new CountNodes(input, reduceTasksNumber);
             countNodes.run(args);
@@ -138,14 +144,26 @@ public class ConnectedComponents {
             System.out.println("Connected Components in " + iterations + " rounds.");
         else
             System.out.println("Connected Components in " + iterations + " round.");
-        
-        
+
         return true;
+        }
+        catch (IOException  ex){
+            throw new HtMException(ex.getMessage());
+        } catch (InterruptedException ex) {
+            throw new HtMException(ex.getMessage());
+        } catch (ClassNotFoundException ex) {
+            throw new HtMException(ex.getMessage());
+        }
+        
     }
     
-    public static void main(String[] args) throws Exception {
-        ConnectedComponents connected = new ConnectedComponents(args[0], args[1], Integer.parseInt(args[2]), true, true);
-        connected.run(null);
+    public static void main(String[] args) {
+        try {
+            ConnectedComponents connected = new ConnectedComponents(args[0], args[1], Integer.parseInt(args[2]), true, true);
+            connected.run(null);
+        } catch (HtMException ex) {
+            Logger.getLogger(ConnectedComponents.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }

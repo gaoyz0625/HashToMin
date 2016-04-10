@@ -25,6 +25,7 @@
 package edu.stefano.forti.pad.verifier;
 
 import edu.stefano.forti.pad.connectedcomponents.JobCounters;
+import java.io.IOException;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -58,7 +59,7 @@ public class Verifier extends Configured implements Tool{
     }
 
     @Override
-    public int run(String[] strings) throws Exception {
+    public int run(String[] strings) throws IOException, InterruptedException, ClassNotFoundException {
 
         Job verifierJob = new Job();
         
