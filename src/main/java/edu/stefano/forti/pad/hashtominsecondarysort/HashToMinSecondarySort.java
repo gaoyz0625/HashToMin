@@ -25,6 +25,7 @@ package edu.stefano.forti.pad.hashtominsecondarysort;
 
 import edu.stefano.forti.pad.connectedcomponents.HtM;
 import edu.stefano.forti.pad.connectedcomponents.JobCounters;
+import java.io.IOException;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -40,20 +41,14 @@ import org.apache.hadoop.util.Tool;
  * @author stefano
  */
 public class HashToMinSecondarySort extends HtM {
-private Path input, output;
-    private final int reduceTasksNumber;
 
     public HashToMinSecondarySort(Path input, Path output, int reduceTasksNumber) {
-        this.input = input;
-        this.output = output;
-        this.reduceTasksNumber = reduceTasksNumber;
+        super(input, output, reduceTasksNumber);
     }
 
     @Override
-    public int run(String[] args) throws Exception {
-
+    protected Job setupJob() throws IOException { 
         Job hashToMinJob = new Job();
-
         hashToMinJob.setJarByClass(HashToMinSecondarySort.class);
         hashToMinJob.setPartitionerClass(HashToMinPartitioner.class);
         hashToMinJob.setSortComparatorClass(HashToMinKeyComparator.class);
@@ -66,25 +61,6 @@ private Path input, output;
         hashToMinJob.setMapOutputValueClass(IntWritable.class);
         hashToMinJob.setOutputKeyClass(IntWritable.class);
         hashToMinJob.setOutputValueClass(Text.class);
-
-        long iterate;
-        int result = -1;
-
-        FileInputFormat.setInputPaths(hashToMinJob, input);
-        FileOutputFormat.setOutputPath(hashToMinJob, output);
-
-        hashToMinJob.waitForCompletion(true);
-
-        Counters counters = hashToMinJob.getCounters();
-        iterate = counters.findCounter(JobCounters.GO_ON).getValue();
-        counters.findCounter(JobCounters.GO_ON).setValue(0);
-
-        if (iterate > 0) {
-            result = 1;
-        } else {
-            result = 0;
-        }
-        
-        return result;
+        return hashToMinJob;
     }
 }

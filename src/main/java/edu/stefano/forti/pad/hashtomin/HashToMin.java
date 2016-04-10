@@ -25,6 +25,7 @@ package edu.stefano.forti.pad.hashtomin;
 
 import edu.stefano.forti.pad.connectedcomponents.HtM;
 import edu.stefano.forti.pad.connectedcomponents.JobCounters;
+import java.io.IOException;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -37,20 +38,14 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
  * Implements a version of HtM without secondary sort.
  * @author stefano
  */
-public class HashToMin extends HtM{
-
-    private final Path input, output;
-    private final int reduceTasksNumber;
+public class HashToMin extends HtM {
 
     public HashToMin(Path input, Path output, int reduceTasksNumber) {
-        this.input = input;
-        this.output = output;
-        this.reduceTasksNumber = reduceTasksNumber;
+        super(input, output, reduceTasksNumber);
     }
 
     @Override
-    public int run(String[] args) throws Exception {
-
+    protected Job setupJob() throws IOException {
         Job hashToMinJob = new Job();
 
         hashToMinJob.setJarByClass(HashToMin.class);
@@ -61,26 +56,7 @@ public class HashToMin extends HtM{
         hashToMinJob.setMapOutputValueClass(ClusterWritable.class);
         hashToMinJob.setOutputKeyClass(IntWritable.class);
         hashToMinJob.setOutputValueClass(Text.class);
-
-        long iterate;
-        int result = -1;
-
-        FileInputFormat.setInputPaths(hashToMinJob, input);
-        FileOutputFormat.setOutputPath(hashToMinJob, output);
-
-        hashToMinJob.waitForCompletion(true);
-        //retrieve the GO_ON counter, if > 0 must return a positive value
-        Counters counters = hashToMinJob.getCounters();
-        iterate = counters.findCounter(JobCounters.GO_ON).getValue();
-        counters.findCounter(JobCounters.GO_ON).setValue(0);
-
-        if (iterate > 0) {
-            result = 1;
-        } else {
-            result = 0;
-        }
-
-        return result;
+        return hashToMinJob;
     }
 
 }
