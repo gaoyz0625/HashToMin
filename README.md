@@ -15,7 +15,7 @@ where:
 - `verifyResult` that is used to execute the CountNodes and the Verifier job if it is set to `true`,
 - `secondarySort` to decide which version of the algorithm to use, HashToMinSecondarySort runs when this attribute is `true`.
 
-Then call the method run over the new object. 
+Then call the method `run()` over the new object. 
 
 Alternatively, the jar can be run on some input issuing the command
 ```bash
