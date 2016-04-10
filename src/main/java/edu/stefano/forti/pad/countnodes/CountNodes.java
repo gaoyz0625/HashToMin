@@ -25,21 +25,21 @@
 package edu.stefano.forti.pad.countnodes;
 
 import edu.stefano.forti.pad.connectedcomponents.JobCounters;
-import edu.stefano.forti.pad.hashtomin.ClusterWritable;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 
 /**
- *
+ * This class launches a job to count the number of distinct nodes 
+ * and the number of malformed lines in the input file.
  * @author stefano
  */
+
 public class CountNodes extends Configured implements Tool {
     private Path input;    
     private final int reduceTasksNumber;

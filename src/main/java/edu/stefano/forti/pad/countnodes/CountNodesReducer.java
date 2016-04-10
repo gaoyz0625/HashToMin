@@ -35,7 +35,14 @@ import org.apache.hadoop.mapreduce.Reducer;
  * @author stefano
  */
 public class CountNodesReducer extends Reducer<IntWritable, NullWritable, NullWritable, NullWritable> {
-
+    /**
+     * Increments a counter for each distinct node received as a key (vertex).
+     * @param vertex
+     * @param none
+     * @param context
+     * @throws IOException
+     * @throws InterruptedException 
+     */
     @Override
     public void reduce(IntWritable vertex, Iterable<NullWritable> none, Context context)
             throws IOException, InterruptedException {

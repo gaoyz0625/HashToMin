@@ -24,9 +24,7 @@
 package edu.stefano.forti.pad.countnodes;
 
 import edu.stefano.forti.pad.connectedcomponents.JobCounters;
-import edu.stefano.forti.pad.hashtomin.ClusterWritable;
 import java.io.IOException;
-import java.util.TreeSet;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -38,22 +36,27 @@ import org.apache.hadoop.mapreduce.Mapper;
  * @author stefano
  */
 public class CountNodesMapper extends Mapper<LongWritable,Text,IntWritable,NullWritable> {
-
+    /**
+     * For each vertex identifier v in a line emits <v, null>; if a line is malformed 
+     * increments a counter.
+     * @param key
+     * @param line
+     * @param context
+     * @throws IOException
+     * @throws InterruptedException 
+     */
     @Override
-    public void map(LongWritable key, Text clust, Context context)
+    public void map(LongWritable key, Text line, Context context)
         throws IOException, InterruptedException{ 
         NullWritable nw = NullWritable.get();
         
-        if (clust.toString().matches("[0-9\\s\\t]+")) {
-            String[] verteces = clust.toString().split("[\\s\\t]+");
-
+        if (line.toString().matches("[0-9\\s\\t]+")) {
+            String[] verteces = line.toString().split("[\\s\\t]+");
             for (String vertex : verteces) {
                 context.write(new IntWritable(Integer.parseInt(vertex)), nw);
             }
         } else {
             context.getCounter(JobCounters.MALFORMED_LINES).increment(1);
         }
-        
-       
     } 
 }

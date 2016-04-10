@@ -28,9 +28,9 @@ package edu.stefano.forti.pad.connectedcomponents;
  * @author stefano
  */
     public enum JobCounters {
-        GO_ON,
-        DUPLICATES,
-        MALFORMED_LINES,
-        VERTECES_END,
-        VERTECES_START
+        GO_ON, // if positive another round of HtM must be run (HtM job)
+        DUPLICATES, //counts the duplicates (Verifier job)
+        MALFORMED_LINES, //counts the input malformed lines (CountNodes job)
+        VERTECES_END, //number of nodes in the input file (Verifier job)
+        VERTECES_START //number of nodes in the output file (Verifier job)
     }

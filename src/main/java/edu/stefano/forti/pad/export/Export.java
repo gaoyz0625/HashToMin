@@ -24,7 +24,6 @@
 
 package edu.stefano.forti.pad.export;
 
-import edu.stefano.forti.pad.hashtomin.ClusterWritable;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -35,7 +34,8 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 
 /**
- *
+ *This class instantiates a job to export those clusters for which the label and
+ * the minimum vertex coincide, after running HtM.
  * @author stefano
  */
 public class Export extends Configured implements Tool {

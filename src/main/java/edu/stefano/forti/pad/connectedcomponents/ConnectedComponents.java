@@ -46,7 +46,15 @@ public class ConnectedComponents {
     private final FileSystem fileSystem;
     private final static int MAX_ITERATIONS = 30; 
    
-
+    /**
+     * Build an instance of the class managing the HashToMin Job.
+     * @param input the input file
+     * @param output the desired output file
+     * @param reduceTasksNumber the number of reducers to be used
+     * @param verifyResult true for veryfying the output
+     * @param secondarySort true for using the secondary sort capability
+     * @throws IOException 
+     */
     public ConnectedComponents(String input, String output, int reduceTasksNumber, boolean verifyResult, boolean secondarySort) throws IOException{
         this.input = new Path(input);
         this.output = new Path(output);
@@ -62,8 +70,8 @@ public class ConnectedComponents {
      * @throws java.lang.Exception
      */
     public boolean run(String[] args) throws Exception {
-        int iterate = 1;
-        int iterations = 0;
+        int iterate = 1; //start HtM when > 0
+        int iterations = 0; //counts the HtM rounds
         Path inputTmp, outputTmp = null;
         HtM hashToMin = null;
         CountNodes countNodes = null;
@@ -75,34 +83,34 @@ public class ConnectedComponents {
         }
    
         while (iterate > 0 && iterations < MAX_ITERATIONS) {
-
-            if (iterations == 0) {
+            
+            if (iterations == 0) { //input is the actual input file
                 inputTmp = this.input;
-            } else {
+            } else { //input is the previous output file
                 inputTmp = this.output.suffix(Integer.toString(iterations));
             }
 
             outputTmp = output.suffix(Integer.toString(iterations + 1));
             
-            
+            //select the correct HtM version
             if (secondarySort)
                 hashToMin = new HashToMinSecondarySort(inputTmp, outputTmp, reduceTasksNumber);
             else 
                 hashToMin = new HashToMin(inputTmp, outputTmp, reduceTasksNumber);
-            
+            //wait for the job to complete
             iterate = hashToMin.run(null);
-
+            //delete intermediate output
             if (iterations != 0) {
                 this.fileSystem.delete(inputTmp, true);
             }
 
             iterations++;
         }
-
+        //starts the Export procedure and awaits termination
         Export export = new Export(outputTmp, output);
         export.run(null);
         this.fileSystem.delete(outputTmp, true);
-
+        //verify the output correctness if required
         if (verifyResult){
             Verifier verifier = new Verifier(output, reduceTasksNumber);
             verifier.run(null);
@@ -115,9 +123,9 @@ public class ConnectedComponents {
                 vertecesStart = countNodes.getVertecesStart();
                 malformedLines = countNodes.getMalformedLines();
             }
-            
+            //the correctness check: no duplicates, all verteces in the output
             boolean check = duplicates == 0 && vertecesStart == vertecesEnd;
-            
+            //log info
             System.out.println("Start. Verteces number: "+ vertecesStart);
             System.out.println("Start. Malformed lines: " + malformedLines);
             System.out.println("End. Verteces number: "+ vertecesEnd);
@@ -125,7 +133,7 @@ public class ConnectedComponents {
             System.out.println("Verifier test passed: " + Boolean.toString(check).toUpperCase());
             
         }
-        
+        //log number of rounds
         if (iterations > 1)
             System.out.println("Connected Components in " + iterations + " rounds.");
         else
