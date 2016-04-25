@@ -41,10 +41,12 @@ import org.apache.hadoop.util.Tool;
  */
 public class Export extends Configured implements Tool {
     private Path input, output;
+    private int numReduceTasks;
     
-    public Export(Path input, Path output){
+    public Export(Path input, Path output, int numReduceTasks){
         this.input = input;
         this.output = output;
+        this.numReduceTasks = numReduceTasks;
     }
 
     @Override
@@ -55,7 +57,7 @@ public class Export extends Configured implements Tool {
         exportJob.setJarByClass(Export.class);
         exportJob.setMapperClass(ExportMapper.class);
         exportJob.setReducerClass(ExportReducer.class);
-        exportJob.setNumReduceTasks(1);
+        exportJob.setNumReduceTasks(numReduceTasks);
         exportJob.setMapOutputKeyClass(IntWritable.class);
         exportJob.setMapOutputValueClass(Text.class);
         exportJob.setOutputKeyClass(IntWritable.class);

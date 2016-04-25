@@ -113,7 +113,7 @@ public class ConnectedComponents {
             iterations++;
         }
         //starts the Export procedure and awaits termination
-        Export export = new Export(outputTmp, output);
+        Export export = new Export(outputTmp, output, reduceTasksNumber);
         export.run(null);
         this.fileSystem.delete(outputTmp, true);
         //verify the output correctness if required
