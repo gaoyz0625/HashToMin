@@ -21,4 +21,8 @@ Alternatively, the jar can be run on some input issuing the command
 ```bash
 hadoop jar ./target/HashToMin-1.0.jar <input> <output> <numberOfReducers>
 ```
-from the project folder.
+from the project folder. To merge the multiple output files you can issue the command:
+
+```bash
+hadoop fs -getmerge <input> <output> <desired_local_output>
+```
